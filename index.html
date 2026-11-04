@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chess Opening Trainer 2.7</title>
+<style>
+*{box-sizing:border-box}
+:root{--panel2:#21332a;--hover:#2a4034;--glow:#263d31;--bg:#101a17;--panel:#192722;--panel2:#20332b;--text:#f2f0e7;--muted:#aab8ad;--line:#34483d;--gold:#d6b46a;--gold2:#f0d99d;--light:#e8dfc9;--dark:#76927d;--green:#79c69a;--red:#e27d76}
+html{scroll-padding-top:16px}
+body{margin:0;background:radial-gradient(ellipse at 15% 0%,var(--glow) 0%,transparent 40%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1240px;margin:0 auto;padding:26px 20px 40px;display:grid;grid-template-columns:minmax(300px,1.08fr) minmax(330px,.92fr);gap:22px;align-items:start}
+header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:2px}
+h1{font-size:clamp(23px,3vw,32px);line-height:1.15;margin:0;letter-spacing:-.5px}
+.brand{display:flex;align-items:center;gap:13px}
+.brandmark{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--gold);border-radius:14px;background:linear-gradient(145deg,var(--panel2),var(--bg));color:var(--gold2);font-size:29px}
+.sub{color:var(--muted);margin:4px 0 0}
+#bw{min-width:0;background:linear-gradient(145deg,var(--panel),var(--bg));border:1px solid var(--line);border-radius:18px;padding:clamp(10px,2vw,20px);box-shadow:0 16px 42px rgba(0,0,0,.25)}
+.boardtop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 2px 12px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+#board{width:100%;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));aspect-ratio:1/1;border:5px solid var(--gold);border-radius:7px;overflow:hidden;user-select:none;-webkit-user-select:none;box-shadow:0 10px 28px rgba(0,0,0,.35)}
+.sq{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;aspect-ratio:1;cursor:grab;touch-action:none}
+.sq:active{cursor:grabbing}.sq{transition:transform .14s ease,background-color .14s ease}
+body[data-theme="blue"]{--glow:#243c5a;--light:#e0e8f2;--dark:#6484a8;--bg:#111a28;--panel:#1b293a;--panel2:#263a52;--hover:#304864;--line:#354a61;--gold:#9db9dc;--gold2:#d6e5fa}
+body[data-theme="wood"]{--glow:#4a3020;--light:#f1dfc4;--dark:#b9875b;--bg:#211810;--panel:#30241a;--panel2:#493625;--hover:#5a432e;--line:#594735;--gold:#c99b62;--gold2:#f0d6ae}
+body[data-theme="purple"]{--glow:#392a53;--light:#e9e0ef;--dark:#9077a8;--bg:#181321;--panel:#261e31;--panel2:#392b47;--hover:#49375a;--line:#463652;--gold:#c2a4dc;--gold2:#e7d6f5}
+body[data-theme="rose"]{--glow:#522d35;--light:#f2e1dc;--dark:#bb807d;--bg:#211619;--panel:#312126;--panel2:#462d33;--hover:#59383e;--line:#593b42;--gold:#d99b91;--gold2:#f5d2c9}
+body[data-theme="ocean"]{--glow:#1d4850;--light:#e1eeea;--dark:#61999a;--bg:#101d20;--panel:#1a2b2e;--panel2:#254044;--hover:#315358;--line:#355255;--gold:#8fc9bc;--gold2:#c7eee2}
+body[data-theme="marble"]{--glow:#414853;--light:#f4f2eb;--dark:#9299a1;--bg:#171a1e;--panel:#252a30;--panel2:#343a42;--hover:#414852;--line:#424950;--gold:#c0c8ce;--gold2:#edf0f2}
+body[data-theme="midnight"]{--glow:#25204e;--light:#dce1f4;--dark:#535b8e;--bg:#10101c;--panel:#1b1b2d;--panel2:#292a43;--hover:#37395a;--line:#33344e;--gold:#a6a8ea;--gold2:#d7d8ff}
+.l{background:var(--light)}.d{background:var(--dark)}
+body[data-theme="green"] .l{background-color:#e8dfc9;background-image:radial-gradient(rgba(90,110,80,.12) .7px,transparent .8px);background-size:5px 5px}
+body[data-theme="green"] .d{background-color:#76927d;background-image:radial-gradient(rgba(20,48,31,.16) .7px,transparent .8px);background-size:5px 5px}
+body[data-theme="wood"] .l{background-color:#f1dfc4;background-image:repeating-linear-gradient(4deg,rgba(125,76,35,.07) 0 1px,transparent 1px 8px),linear-gradient(95deg,rgba(255,255,255,.22),transparent 45%,rgba(110,65,30,.08))}
+body[data-theme="wood"] .d{background-color:#b9875b;background-image:repeating-linear-gradient(4deg,rgba(73,42,20,.13) 0 1px,transparent 1px 7px),linear-gradient(95deg,rgba(255,255,255,.12),transparent 48%,rgba(65,36,18,.1))}
+body[data-theme="blue"] .l{background-color:#e0e8f2;background-image:repeating-linear-gradient(0deg,rgba(63,88,115,.08) 0 1px,transparent 1px 4px)}
+body[data-theme="blue"] .d{background-color:#6484a8;background-image:repeating-linear-gradient(0deg,rgba(23,43,67,.16) 0 1px,transparent 1px 4px)}
+body[data-theme="purple"] .l{background-color:#e9e0ef;background-image:radial-gradient(ellipse at 30% 25%,rgba(255,255,255,.45),transparent 65%)}
+body[data-theme="purple"] .d{background-color:#9077a8;background-image:radial-gradient(ellipse at 30% 25%,rgba(255,255,255,.12),transparent 68%)}
+body[data-theme="rose"] .l{background-color:#f2e1dc;background-image:radial-gradient(rgba(110,48,49,.09) .8px,transparent 1px);background-size:4px 4px}
+body[data-theme="rose"] .d{background-color:#bb807d;background-image:radial-gradient(rgba(60,25,31,.12) .8px,transparent 1px);background-size:4px 4px}
+body[data-theme="ocean"] .l{background-color:#e1eeea;background-image:linear-gradient(135deg,rgba(255,255,255,.45),transparent 65%)}
+body[data-theme="ocean"] .d{background-color:#61999a;background-image:linear-gradient(135deg,rgba(255,255,255,.15),transparent 65%)}
+body[data-theme="marble"] .l{background-color:#f4f2eb;background-image:repeating-linear-gradient(132deg,transparent 0 22px,rgba(90,99,110,.09) 23px,transparent 25px 42px),radial-gradient(ellipse at 75% 22%,rgba(255,255,255,.8),transparent 55%)}
+body[data-theme="marble"] .d{background-color:#9299a1;background-image:repeating-linear-gradient(132deg,transparent 0 22px,rgba(42,50,61,.14) 23px,transparent 25px 42px),linear-gradient(45deg,rgba(255,255,255,.12),transparent 65%)}
+body[data-theme="midnight"] .l{background-color:#dce1f4;background-image:linear-gradient(135deg,rgba(255,255,255,.35),transparent 65%)}
+body[data-theme="midnight"] .d{background-color:#535b8e;background-image:linear-gradient(135deg,rgba(255,255,255,.12),transparent 65%)}
+.pc{font-size:clamp(20px,5.9vw,55px);font-size:min(9.2cqw,8.3vh);line-height:1;pointer-events:none}
+.pc.w{color:#fff;text-shadow:0 2px 3px #554c3c,0 0 1px #443b30}.pc.b{color:#202820;text-shadow:0 1px 1px rgba(255,255,255,.35)}
+.last{box-shadow:inset 0 0 0 100px rgba(244,197,75,.28)}.sel{box-shadow:inset 0 0 0 100px rgba(212,165,57,.52)}
+.hint{box-shadow:inset 0 0 0 3px #168b55,inset 0 0 0 100px rgba(30,158,90,.24)}
+.tgt::before{content:"";position:absolute;width:28%;aspect-ratio:1;border-radius:50%;background:rgba(0,0,0,.32)}
+.rk,.fl{position:absolute;font:700 10px system-ui,sans-serif;font-style:normal;opacity:.78;color:#253028}
+.rk{top:2px;left:4px}.fl{bottom:1px;right:4px}
+.sh{animation:sh .3s}@keyframes sh{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+#pn{min-width:0;display:grid;gap:14px}
+.card{background:linear-gradient(145deg,var(--panel),var(--bg));border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.cardtitle{font-weight:750;font-size:14px;letter-spacing:.02em}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--gold)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:9px}
+button,select{font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+button:hover{border-color:var(--gold);background:var(--hover)}button:active{transform:translateY(1px)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+button.on,.primary{background:var(--gold);border-color:var(--gold2);color:#16170f}
+#tabs button{flex:1}.select-label{display:block;color:var(--muted);font-size:12px;font-weight:650;margin:7px 1px 3px}select{width:100%;margin:3px 0 8px;background:var(--panel2)}
+label{color:var(--muted);font-size:13px}
+.settings{display:flex;flex-wrap:wrap;gap:8px 18px}
+.settings label{display:flex;align-items:center;gap:7px}.theme-label{margin-left:auto}
+input[type="checkbox"]{accent-color:var(--gold)}
+#msg{font-weight:700;font-size:15px}
+#note{color:var(--gold2);margin-top:7px;font-size:13px;min-height:1.2em}
+#mv{font-variant-numeric:tabular-nums;line-height:1.8;overflow-wrap:anywhere}
+#st{font-size:12px;text-align:center}
+#branches{display:grid;gap:10px}
+.branchgroup{border-top:1px solid var(--line);padding-top:9px}
+.branchlabel{font-size:11px;color:var(--gold2);font-weight:750;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.branchbuttons{display:flex;flex-wrap:wrap;gap:7px}
+.branchbuttons button{padding:7px 10px;font-size:13px}
+.branchbuttons button span{opacity:.65;font-size:11px;margin-left:4px}
+.branchbuttons button:disabled{opacity:.5;cursor:default}
+#history{display:grid;gap:7px;max-height:230px;overflow:auto}
+.moveitem{display:grid;grid-template-columns:42px 1fr;gap:8px;padding:7px 9px;border-radius:8px;background:rgba(255,255,255,.035);font-size:12px}
+.moveitem strong{color:var(--gold2);font-variant-numeric:tabular-nums}.moveitem p{margin:0;color:var(--muted)}
+.opening-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}.opening-tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;min-height:70px;padding:10px;background:var(--panel2);border-color:var(--line)}.opening-tile.active{background:color-mix(in srgb,var(--gold) 22%,var(--panel));border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}.opening-name{font-size:13px;font-weight:800;color:var(--gold2)}.opening-desc{font-size:11px;color:var(--muted);line-height:1.3}.variant-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:250px;overflow:auto;padding:2px}.variant-tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;min-height:74px;padding:10px 11px;background:var(--panel2);border-color:var(--line)}.variant-tile:hover{background:var(--hover)}.variant-tile.active{background:color-mix(in srgb,var(--gold) 22%,var(--panel));border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}.tile-move{font-size:12px;font-weight:800;color:var(--gold2);letter-spacing:.03em}.tile-title{font-size:12px;font-weight:700;line-height:1.3}.theory-line{font-size:12px;color:var(--gold2);font-weight:750;margin-bottom:9px}.theory-move{padding:9px 11px;border-radius:9px;background:var(--panel2);font-weight:750;margin-bottom:12px}.theory-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:10px 0 3px}.theory-copy{margin:0;color:var(--text);font-size:13px}.theory-comment{margin:10px 0 0;padding-top:8px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.journey-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.journey-rank{font-weight:800;color:var(--gold2)}.journey-xp{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.xpbar{height:9px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin:7px 0 9px}.xpbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:inherit;transition:width .3s}.journey-stats{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px}.journey-msg{color:var(--gold2);font-size:13px;font-weight:650;min-height:1.3em;margin-top:7px}.dragghost{position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-58%);font-size:clamp(42px,8vw,76px);line-height:1;text-shadow:0 5px 12px rgba(0,0,0,.48);filter:drop-shadow(0 0 3px rgba(0,0,0,.25))}.dragghost.w{color:#fff}.dragghost.b{color:#202820}.drag-source .pc{opacity:.18}.controls{display:flex;flex-wrap:wrap;gap:8px}.controls button{flex:1}
+.ok{color:var(--green)}.bad{color:var(--red)}
+@media(max-width:780px){main{grid-template-columns:1fr;padding:14px 12px 28px;gap:14px}#bw{max-width:620px;width:100%;margin:auto}header{align-items:flex-start}.pc{font-size:min(9.2cqw,7.6vh)}}
+@media(min-width:781px){#bw{position:sticky;top:16px}}
+.bot-options{margin-top:12px}.bot-options[hidden]{display:none!important}.bot-settings{display:grid;grid-template-columns:1fr 1.4fr auto;align-items:end;gap:9px}.bot-settings label{display:block;color:var(--muted);font-size:12px;font-weight:650}.bot-settings select{display:block;width:100%;margin-top:4px}.bot-settings button{min-height:38px}@media(max-width:560px){.bot-settings{grid-template-columns:1fr 1fr}.bot-settings button{grid-column:1/-1}}
+body.bot-mode #nb,body.bot-mode #trainerRepertoire,body.bot-mode #journey,body.bot-mode #openingCard,body.bot-mode #variationCard,body.bot-mode #theoryCard,body.bot-mode #branchCard,body.bot-mode #hb,body.bot-mode #sb,body.bot-mode #st{display:none!important}/* Unified controls, menus and scrolling */
+:root{color-scheme:dark}
+select{appearance:none;-webkit-appearance:none;color-scheme:dark;background-color:var(--panel2)!important;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%)!important;background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px!important}
+select:hover{border-color:var(--gold);background-color:var(--hover)!important}
+select:focus-visible{border-color:var(--gold);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 25%,transparent)}
+select option{background-color:var(--panel2);color:var(--text)}
+select option:checked{background-color:var(--gold);color:#16170f}
+*{scrollbar-color:var(--gold) var(--panel2);scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--panel2);border-radius:99px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--gold2),var(--gold));border:2px solid var(--panel2);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold2)}
+::-webkit-scrollbar-corner{background:var(--panel)}/* 2.7: game controls, check state and phone layout */
+.sq.check{background-image:radial-gradient(circle,rgba(226,125,118,.62),rgba(226,125,118,.18) 68%)!important;box-shadow:inset 0 0 0 3px var(--red)}
+.moveitem.latest{background:color-mix(in srgb,var(--gold) 22%,var(--panel));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 55%,transparent)}
+.capture-trays{display:grid;gap:6px;margin-top:9px}body:not(.bot-mode) .capture-trays{display:none}
+.capture-trays>div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;border-radius:8px;background:var(--panel2);font-size:11px;color:var(--muted)}
+.capture-trays strong{min-height:22px;display:flex;align-items:center;gap:2px;color:var(--text);font-size:17px}
+.capture-piece{line-height:1}.capture-piece.w{color:#fff;text-shadow:0 1px 2px #555}.capture-piece.b{color:#202820}
+.bot-game-actions{margin:12px 0 4px}.bot-game-actions[hidden]{display:none!important}
+body.bot-mode #botGameActions:not([hidden]){display:flex}
+.promotion-backdrop{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;background:rgba(8,10,9,.72);backdrop-filter:blur(5px)}
+.promotion-backdrop[hidden]{display:none!important}
+.promotion-dialog{width:min(360px,100%);padding:18px;border:1px solid var(--gold);border-radius:16px;background:var(--panel);box-shadow:0 20px 60px rgba(0,0,0,.5);text-align:center}
+.promotion-options{display:flex;justify-content:center;gap:9px;margin:15px 0}
+.promotion-options button{min-width:56px;font-size:34px;padding:7px}
+@media(max-width:780px){body.bot-mode main{grid-template-columns:1fr}body.bot-mode #pn{order:1}body.bot-mode #bw{order:2}body.bot-mode #bw{position:static}.bot-settings{grid-template-columns:1fr 1fr}.bot-settings button{grid-column:1/-1}}
+@media(max-width:420px){.card{padding:13px}.bot-game-actions{gap:6px}.bot-game-actions button{padding:8px 7px;font-size:12px}}</style></head><body>
+<main>
+<header>
+ <div class="brand"><div class="brandmark">♞</div><div><h1>Chess Opening Trainer</h1><p class="sub">Understand openings. Know why each move works. Master your lines.</p></div></div>
+</header>
+<section id="bw">
+ <div class="boardtop"><span>Chessboard</span><span>8 × 8 · equal squares</span></div>
+ <div id="board" aria-label="Chessboard"></div><div id="captures" class="capture-trays"><div><span>Captured by you</span><strong id="capturedByYou">—</strong></div><div><span>Captured by the bot</span><strong id="capturedByBot">—</strong></div></div>
+</section>
+<section id="pn"> <div class="card" id="botPanel"><div class="cardhead"><span class="cardtitle">Play chess</span><span class="eyebrow">Choose a mode</span></div><div class="row" id="modeTabs"><button type="button" data-mode="trainer" class="on">Opening trainer</button><button type="button" data-mode="bot">Play a bot</button></div><div id="botControls" class="bot-options" hidden><div class="bot-settings"><label>Your color<select id="botColor"><option value="random">Random start</option><option value="w">White</option><option value="b">Black</option></select></label><label>Bot strength<select id="botLevel"><option value="300">~300 Elo · Beginner</option><option value="600">~600 Elo · Casual</option><option value="900">~900 Elo · Club beginner</option><option value="1200">~1200 Elo · Club player</option><option value="1500">~1500 Elo · Strong club player</option></select></label><button type="button" id="botStart" class="primary">Start game</button></div><div id="botGameActions" class="controls bot-game-actions" hidden><button type="button" id="undoBot">Undo turn</button><button type="button" id="resignBot">Resign</button><button type="button" id="newBot" class="primary">New game</button></div><p class="sub">Strengths are approximate and are not officially calibrated to Chess.com ratings. The bot runs in your browser and works offline.</p></div></div>
+ <div class="card" id="trainerRepertoire">
+  <div class="cardhead"><span class="cardtitle">Your Repertoire</span><span class="eyebrow">Training</span></div>
+  <div class="row" id="tabs"><button data-r="w">Play White</button><button data-r="b">Play Black</button></div>
+  
+  <div class="settings"><label><input type="checkbox" id="learn" checked> Show the correct move</label><label><input type="checkbox" id="sound" checked> Move sound</label><label><input type="checkbox" id="coords" checked> Coordinates</label><label class="theme-label">Board material <select id="theme" style="width:auto;margin:0"><option value="green">Forest felt</option><option value="wood">Walnut wood</option><option value="blue">Slate metal</option><option value="purple">Amethyst velvet</option><option value="rose">Bordeaux leather</option><option value="ocean">Lagoon enamel</option><option value="marble">Carrara marble</option><option value="midnight">Midnight</option></select></label><label class="theme-label">Move sound <select id="soundStyle" style="width:auto;margin:0"><option value="wood">Wood click</option><option value="soft">Soft click</option><option value="glass">Glass</option><option value="type">Typewriter</option><option value="retro">Retro</option></select></label></div>
+ </div>
+ <div class="card" id="journey"><div class="cardhead"><span class="cardtitle">Your learning journey</span><span class="eyebrow">Progress</span></div><div class="journey-head"><span id="rank" class="journey-rank">Opening beginner</span><span id="xp" class="journey-xp">0 XP</span></div><div class="xpbar"><span id="xpfill"></span></div><div id="journeyStats" class="journey-stats"></div><div id="journeyMsg" class="journey-msg">Make your first move and earn experience.</div></div><div class="card" id="openingCard"><div class="cardhead"><span class="cardtitle">Openings</span><span class="eyebrow">By side</span></div><div id="openingTiles" class="opening-tiles"></div></div><div class="card" id="variationCard"><div class="cardhead"><span class="cardtitle">Choose a variation</span><span class="eyebrow">Training line</span></div><p class="sub" style="font-size:12px;margin:0 0 10px">Each tile shows the opponent’s first reply. Select one to train that variation.</p><div id="variantTiles" class="variant-tiles"></div></div><div class="card"><div class="cardhead"><span class="cardtitle">Current position</span><span class="eyebrow">Coach</span></div><div id="msg"></div></div><div class="card theory-card" id="theoryCard"><div class="cardhead"><span class="cardtitle">Theory: Why this move?</span><span class="eyebrow">Move-by-move theory</span></div><div id="theoryLine" class="theory-line"></div><div id="theoryMove" class="theory-move"></div><div class="theory-label">Why play this move?</div><p id="theoryWhy" class="theory-copy"></p><div class="theory-label">Why not another move?</div><p id="theoryAlternative" class="theory-copy"></p><p id="theoryComment" class="theory-comment"></p></div>
+ <div class="card" id="branchCard"><div class="cardhead"><span class="cardtitle">Opponent variations</span><span class="eyebrow">Choices</span></div><p class="sub" style="font-size:12px;margin:0 0 9px">After your move, choose any recorded opponent reply here.</p><div id="branches"><span class="sub">No opponent reply is needed yet.</span></div></div>
+ <div class="card"><div class="cardhead"><span class="cardtitle">Move history</span><span class="eyebrow">Notation</span></div><div id="mv"></div><div id="history"></div></div>
+ <div class="controls"><button id="hb">Hint</button><button id="sb">Solution</button><button id="nb" class="primary">Restart</button></div>
+ <div id="st" class="sub"></div>
+</section>
+<div id="promotionPicker" class="promotion-backdrop" hidden><div class="promotion-dialog" role="dialog" aria-modal="true" aria-labelledby="promotionTitle"><strong id="promotionTitle">Choose a promotion</strong><div id="promotionOptions" class="promotion-options"></div><button type="button" id="cancelPromotion">Cancel</button></div></div></main>
+<script>
+/* chess.js v0.10.3 license:
+Copyright (c) 2020, Jeff Hlywa (jhlywa@gmail.com)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+*/
+var Chess=function(r){var u="b",s="w",l=-1,_="p",A="n",S="b",m="r",y="q",p="k",t="pnbrqkPNBRQK",e="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",g=["1-0","0-1","1/2-1/2","*"],C={b:[16,32,17,15],w:[-16,-32,-17,-15]},T={n:[-18,-33,-31,-14,18,33,31,14],b:[-17,-15,17,15],r:[-16,1,16,-1],q:[-17,-16,-15,1,17,16,15,-1],k:[-17,-16,-15,1,17,16,15,-1]},c=[20,0,0,0,0,0,0,24,0,0,0,0,0,0,20,0,0,20,0,0,0,0,0,24,0,0,0,0,0,20,0,0,0,0,20,0,0,0,0,24,0,0,0,0,20,0,0,0,0,0,0,20,0,0,0,24,0,0,0,20,0,0,0,0,0,0,0,0,20,0,0,24,0,0,20,0,0,0,0,0,0,0,0,0,0,20,2,24,2,20,0,0,0,0,0,0,0,0,0,0,0,2,53,56,53,2,0,0,0,0,0,0,24,24,24,24,24,24,56,0,56,24,24,24,24,24,24,0,0,0,0,0,0,2,53,56,53,2,0,0,0,0,0,0,0,0,0,0,0,20,2,24,2,20,0,0,0,0,0,0,0,0,0,0,20,0,0,24,0,0,20,0,0,0,0,0,0,0,0,20,0,0,0,24,0,0,0,20,0,0,0,0,0,0,20,0,0,0,0,24,0,0,0,0,20,0,0,0,0,20,0,0,0,0,0,24,0,0,0,0,0,20,0,0,20,0,0,0,0,0,0,24,0,0,0,0,0,0,20],v=[17,0,0,0,0,0,0,16,0,0,0,0,0,0,15,0,0,17,0,0,0,0,0,16,0,0,0,0,0,15,0,0,0,0,17,0,0,0,0,16,0,0,0,0,15,0,0,0,0,0,0,17,0,0,0,16,0,0,0,15,0,0,0,0,0,0,0,0,17,0,0,16,0,0,15,0,0,0,0,0,0,0,0,0,0,17,0,16,0,15,0,0,0,0,0,0,0,0,0,0,0,0,17,16,15,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,0,0,0,-15,-16,-17,0,0,0,0,0,0,0,0,0,0,0,0,-15,0,-16,0,-17,0,0,0,0,0,0,0,0,0,0,-15,0,0,-16,0,0,-17,0,0,0,0,0,0,0,0,-15,0,0,0,-16,0,0,0,-17,0,0,0,0,0,0,-15,0,0,0,0,-16,0,0,0,0,-17,0,0,0,0,-15,0,0,0,0,0,-16,0,0,0,0,0,-17,0,0,-15,0,0,0,0,0,0,-16,0,0,0,0,0,0,-17],h={p:0,n:1,b:2,r:3,q:4,k:5},o={NORMAL:"n",CAPTURE:"c",BIG_PAWN:"b",EP_CAPTURE:"e",PROMOTION:"p",KSIDE_CASTLE:"k",QSIDE_CASTLE:"q"},I={NORMAL:1,CAPTURE:2,BIG_PAWN:4,EP_CAPTURE:8,PROMOTION:16,KSIDE_CASTLE:32,QSIDE_CASTLE:64},P=7,w=6,L=1,R=0,N={a8:0,b8:1,c8:2,d8:3,e8:4,f8:5,g8:6,h8:7,a7:16,b7:17,c7:18,d7:19,e7:20,f7:21,g7:22,h7:23,a6:32,b6:33,c6:34,d6:35,e6:36,f6:37,g6:38,h6:39,a5:48,b5:49,c5:50,d5:51,e5:52,f5:53,g5:54,h5:55,a4:64,b4:65,c4:66,d4:67,e4:68,f4:69,g4:70,h4:71,a3:80,b3:81,c3:82,d3:83,e3:84,f3:85,g3:86,h3:87,a2:96,b2:97,c2:98,d2:99,e2:100,f2:101,g2:102,h2:103,a1:112,b1:113,c1:114,d1:115,e1:116,f1:117,g1:118,h1:119},E={w:[{square:N.a1,flag:I.QSIDE_CASTLE},{square:N.h1,flag:I.KSIDE_CASTLE}],b:[{square:N.a8,flag:I.QSIDE_CASTLE},{square:N.h8,flag:I.KSIDE_CASTLE}]},O=new Array(128),k={w:l,b:l},q=s,D={w:0,b:0},K=l,d=0,b=1,Q=[],U={};function x(r){void 0===r&&(r=!1),O=new Array(128),k={w:l,b:l},q=s,D={w:0,b:0},K=l,d=0,b=1,Q=[],r||(U={}),F(M())}function j(){B(e)}function B(r,e){void 0===e&&(e=!1);var n=r.split(/\s+/),t=n[0],o=0;if(!$(r).valid)return!1;x(e);for(var i=0;i<t.length;i++){var f=t.charAt(i);if("/"===f)o+=8;else if(-1!=="0123456789".indexOf(f))o+=parseInt(f,10);else{var a=f<"a"?s:u;W({type:f.toLowerCase(),color:a},fr(o)),o++}}return q=n[1],-1<n[2].indexOf("K")&&(D.w|=I.KSIDE_CASTLE),-1<n[2].indexOf("Q")&&(D.w|=I.QSIDE_CASTLE),-1<n[2].indexOf("k")&&(D.b|=I.KSIDE_CASTLE),-1<n[2].indexOf("q")&&(D.b|=I.QSIDE_CASTLE),K="-"===n[3]?l:N[n[3]],d=parseInt(n[4],10),b=parseInt(n[5],10),F(M()),!0}function $(r){var e="No errors.",n="FEN string must contain six space-delimited fields.",t="6th field (move number) must be a positive integer.",o="5th field (half move counter) must be a non-negative integer.",i="4th field (en-passant square) is invalid.",f="3rd field (castling availability) is invalid.",a="2nd field (side to move) is invalid.",l="1st field (piece positions) does not contain 8 '/'-delimited rows.",u="1st field (piece positions) is invalid [consecutive numbers].",s="1st field (piece positions) is invalid [invalid piece].",p="1st field (piece positions) is invalid [row too large].",c="Illegal en-passant square",v=r.split(/\s+/);if(6!==v.length)return{valid:!1,error_number:1,error:n};if(isNaN(v[5])||parseInt(v[5],10)<=0)return{valid:!1,error_number:2,error:t};if(isNaN(v[4])||parseInt(v[4],10)<0)return{valid:!1,error_number:3,error:o};if(!/^(-|[abcdefgh][36])$/.test(v[3]))return{valid:!1,error_number:4,error:i};if(!/^(KQ?k?q?|Qk?q?|kq?|q|-)$/.test(v[2]))return{valid:!1,error_number:5,error:f};if(!/^(w|b)$/.test(v[1]))return{valid:!1,error_number:6,error:a};var g=v[0].split("/");if(8!==g.length)return{valid:!1,error_number:7,error:l};for(var h=0;h<g.length;h++){for(var E=0,d=!1,b=0;b<g[h].length;b++)if(isNaN(g[h][b])){if(!/^[prnbqkPRNBQK]$/.test(g[h][b]))return{valid:!1,error_number:9,error:s};E+=1,d=!1}else{if(d)return{valid:!1,error_number:8,error:u};E+=parseInt(g[h][b],10),d=!0}if(8!==E)return{valid:!1,error_number:10,error:p}}return"3"==v[3][1]&&"w"==v[1]||"6"==v[3][1]&&"b"==v[1]?{valid:!1,error_number:11,error:c}:{valid:!0,error_number:0,error:e}}function M(){for(var r=0,e="",n=N.a8;n<=N.h1;n++){if(null==O[n])r++;else{0<r&&(e+=r,r=0);var t=O[n].color,o=O[n].type;e+=t===s?o.toUpperCase():o.toLowerCase()}n+1&136&&(0<r&&(e+=r),n!==N.h1&&(e+="/"),r=0,n+=8)}var i="";D[s]&I.KSIDE_CASTLE&&(i+="K"),D[s]&I.QSIDE_CASTLE&&(i+="Q"),D[u]&I.KSIDE_CASTLE&&(i+="k"),D[u]&I.QSIDE_CASTLE&&(i+="q"),i=i||"-";var f=K===l?"-":fr(K);return[e,q,i,f,d,b].join(" ")}function G(r){for(var e=0;e<r.length;e+=2)"string"==typeof r[e]&&"string"==typeof r[e+1]&&(U[r[e]]=r[e+1]);return U}function F(r){0<Q.length||(r!==e?(U.SetUp="1",U.FEN=r):(delete U.SetUp,delete U.FEN))}function i(r){var e=O[N[r]];return e?{type:e.type,color:e.color}:null}function W(r,e){if(!("type"in r&&"color"in r))return!1;if(-1===t.indexOf(r.type.toLowerCase()))return!1;if(!(e in N))return!1;var n=N[e];return(r.type!=p||k[r.color]==l||k[r.color]==n)&&(O[n]={type:r.type,color:r.color},r.type===p&&(k[r.color]=n),F(M()),!0)}function H(r,e,n,t,o){var i={color:q,from:e,to:n,flags:t,piece:r[e].type};return o&&(i.flags|=I.PROMOTION,i.promotion=o),r[n]?i.captured=r[n].type:t&I.EP_CAPTURE&&(i.captured=_),i}function Z(r){function e(r,e,n,t,o){if(r[n].type!==_||or(t)!==R&&or(t)!==P)e.push(H(r,n,t,o));else for(var i=[y,m,S,A],f=0,a=i.length;f<a;f++)e.push(H(r,n,t,o,i[f]))}var n=[],t=q,o=ar(t),i={b:L,w:w},f=N.a8,a=N.h1,l=!1,u=!(void 0!==r&&"legal"in r)||r.legal;if(void 0!==r&&"square"in r){if(!(r.square in N))return[];f=a=N[r.square],l=!0}for(var s=f;s<=a;s++)if(136&s)s+=7;else{var p=O[s];if(null!=p&&p.color===t)if(p.type===_){var c=s+C[t][0];if(null==O[c]){e(O,n,s,c,I.NORMAL);c=s+C[t][1];i[t]===or(s)&&null==O[c]&&e(O,n,s,c,I.BIG_PAWN)}for(v=2;v<4;v++){136&(c=s+C[t][v])||(null!=O[c]&&O[c].color===o?e(O,n,s,c,I.CAPTURE):c===K&&e(O,n,s,K,I.EP_CAPTURE))}}else for(var v=0,g=T[p.type].length;v<g;v++){var h=T[p.type][v];for(c=s;!(136&(c+=h));){if(null!=O[c]){if(O[c].color===t)break;e(O,n,s,c,I.CAPTURE);break}if(e(O,n,s,c,I.NORMAL),"n"===p.type||"k"===p.type)break}}}if(!l||a===k[t]){if(D[t]&I.KSIDE_CASTLE){var E=(d=k[t])+2;null!=O[d+1]||null!=O[E]||V(o,k[t])||V(o,d+1)||V(o,E)||e(O,n,k[t],E,I.KSIDE_CASTLE)}if(D[t]&I.QSIDE_CASTLE){var d;E=(d=k[t])-2;null!=O[d-1]||null!=O[d-2]||null!=O[d-3]||V(o,k[t])||V(o,d-1)||V(o,E)||e(O,n,k[t],E,I.QSIDE_CASTLE)}}if(!u)return n;var b=[];for(s=0,g=n.length;s<g;s++)er(n[s]),X(t)||b.push(n[s]),nr();return b}function z(r,e){var n="";if(r.flags&I.KSIDE_CASTLE)n="O-O";else if(r.flags&I.QSIDE_CASTLE)n="O-O-O";else{var t=function(r,e){for(var n=Z({legal:!e}),t=r.from,o=r.to,i=r.piece,f=0,a=0,l=0,u=0,s=n.length;u<s;u++){var p=n[u].from,c=n[u].to,v=n[u].piece;i===v&&t!==p&&o===c&&(f++,or(t)===or(p)&&a++,ir(t)===ir(p)&&l++)}if(0<f)return 0<a&&0<l?fr(t):0<l?fr(t).charAt(1):fr(t).charAt(0);return""}(r,e);r.piece!==_&&(n+=r.piece.toUpperCase()+t),r.flags&(I.CAPTURE|I.EP_CAPTURE)&&(r.piece===_&&(n+=fr(r.from)[0]),n+="x"),n+=fr(r.to),r.flags&I.PROMOTION&&(n+="="+r.promotion.toUpperCase())}return er(r),f()&&(a()?n+="#":n+="+"),nr(),n}function J(r){return r.replace(/=/,"").replace(/[+#]?[?!]*$/,"")}function V(r,e){for(var n=N.a8;n<=N.h1;n++)if(136&n)n+=7;else if(null!=O[n]&&O[n].color===r){var t=O[n],o=n-e,i=119+o;if(c[i]&1<<h[t.type]){if(t.type===_){if(0<o){if(t.color===s)return!0}else if(t.color===u)return!0;continue}if("n"===t.type||"k"===t.type)return!0;for(var f=v[i],a=n+f,l=!1;a!==e;){if(null!=O[a]){l=!0;break}a+=f}if(!l)return!0}}return!1}function X(r){return V(ar(r),k[r])}function f(){return X(q)}function a(){return f()&&0===Z().length}function n(){return!f()&&0===Z().length}function Y(){for(var r={},e=[],n=0,t=0,o=N.a8;o<=N.h1;o++)if(t=(t+1)%2,136&o)o+=7;else{var i=O[o];i&&(r[i.type]=i.type in r?r[i.type]+1:1,i.type===S&&e.push(t),n++)}if(2===n)return!0;if(3===n&&(1===r[S]||1===r[A]))return!0;if(n===r[S]+2){var f=0,a=e.length;for(o=0;o<a;o++)f+=e[o];if(0===f||f===a)return!0}return!1}function rr(){for(var r=[],e={},n=!1;;){var t=nr();if(!t)break;r.push(t)}for(;;){var o=M().split(" ").slice(0,4).join(" ");if(e[o]=o in e?e[o]+1:1,3<=e[o]&&(n=!0),!r.length)break;er(r.pop())}return n}function er(r){var e,n=q,t=ar(n);if(e=r,Q.push({move:e,kings:{b:k.b,w:k.w},turn:q,castling:{b:D.b,w:D.w},ep_square:K,half_moves:d,move_number:b}),O[r.to]=O[r.from],O[r.from]=null,r.flags&I.EP_CAPTURE&&(q===u?O[r.to-16]=null:O[r.to+16]=null),r.flags&I.PROMOTION&&(O[r.to]={type:r.promotion,color:n}),O[r.to].type===p){if(k[O[r.to].color]=r.to,r.flags&I.KSIDE_CASTLE){var o=r.to-1,i=r.to+1;O[o]=O[i],O[i]=null}else if(r.flags&I.QSIDE_CASTLE){o=r.to+1,i=r.to-2;O[o]=O[i],O[i]=null}D[n]=""}if(D[n])for(var f=0,a=E[n].length;f<a;f++)if(r.from===E[n][f].square&&D[n]&E[n][f].flag){D[n]^=E[n][f].flag;break}if(D[t])for(f=0,a=E[t].length;f<a;f++)if(r.to===E[t][f].square&&D[t]&E[t][f].flag){D[t]^=E[t][f].flag;break}K=r.flags&I.BIG_PAWN?"b"===q?r.to-16:r.to+16:l,r.piece===_||r.flags&(I.CAPTURE|I.EP_CAPTURE)?d=0:d++,q===u&&b++,q=ar(q)}function nr(){var r=Q.pop();if(null==r)return null;var e=r.move;k=r.kings,q=r.turn,D=r.castling,K=r.ep_square,d=r.half_moves,b=r.move_number;var n,t,o=q,i=ar(q);if(O[e.from]=O[e.to],O[e.from].type=e.piece,O[e.to]=null,e.flags&I.CAPTURE)O[e.to]={type:e.captured,color:i};else if(e.flags&I.EP_CAPTURE){var f;f=o===u?e.to-16:e.to+16,O[f]={type:_,color:i}}e.flags&(I.KSIDE_CASTLE|I.QSIDE_CASTLE)&&(e.flags&I.KSIDE_CASTLE?(n=e.to+1,t=e.to-1):e.flags&I.QSIDE_CASTLE&&(n=e.to-2,t=e.to+1),O[n]=O[t],O[t]=null);return e}function tr(r,e){var n=J(r);if(e){var t=n.match(/([pnbrqkPNBRQK])?([a-h][1-8])x?-?([a-h][1-8])([qrbnQRBN])?/);if(t)var o=t[1],i=t[2],f=t[3],a=t[4]}for(var l=Z(),u=0,s=l.length;u<s;u++){if(n===J(z(l[u]))||e&&n===J(z(l[u],!0)))return l[u];if(t&&(!o||o.toLowerCase()==l[u].piece)&&N[i]==l[u].from&&N[f]==l[u].to&&(!a||a.toLowerCase()==l[u].promotion))return l[u]}return null}function or(r){return r>>4}function ir(r){return 15&r}function fr(r){var e=ir(r),n=or(r);return"abcdefgh".substring(e,e+1)+"87654321".substring(n,n+1)}function ar(r){return r===s?u:s}function lr(r){var e=function r(e){var n=e instanceof Array?[]:{};for(var t in e)n[t]="object"==typeof t?r(e[t]):e[t];return n}(r);e.san=z(e,!1),e.to=fr(e.to),e.from=fr(e.from);var n="";for(var t in I)I[t]&e.flags&&(n+=o[t]);return e.flags=n,e}function ur(r){return r.replace(/^\s+|\s+$/g,"")}return B(void 0===r?e:r),{WHITE:s,BLACK:u,PAWN:_,KNIGHT:A,BISHOP:S,ROOK:m,QUEEN:y,KING:p,SQUARES:function(){for(var r=[],e=N.a8;e<=N.h1;e++)136&e?e+=7:r.push(fr(e));return r}(),FLAGS:o,load:function(r){return B(r)},reset:function(){return j()},moves:function(r){for(var e=Z(r),n=[],t=0,o=e.length;t<o;t++)void 0!==r&&"verbose"in r&&r.verbose?n.push(lr(e[t])):n.push(z(e[t],!1));return n},in_check:function(){return f()},in_checkmate:function(){return a()},in_stalemate:function(){return n()},in_draw:function(){return 100<=d||n()||Y()||rr()},insufficient_material:function(){return Y()},in_threefold_repetition:function(){return rr()},game_over:function(){return 100<=d||a()||n()||Y()||rr()},validate_fen:function(r){return $(r)},fen:function(){return M()},board:function(){for(var r=[],e=[],n=N.a8;n<=N.h1;n++)null==O[n]?e.push(null):e.push({type:O[n].type,color:O[n].color}),n+1&136&&(r.push(e),e=[],n+=8);return r},pgn:function(r){var e="object"==typeof r&&"string"==typeof r.newline_char?r.newline_char:"\n",n="object"==typeof r&&"number"==typeof r.max_width?r.max_width:0,t=[],o=!1;for(var i in U)t.push("["+i+' "'+U[i]+'"]'+e),o=!0;o&&Q.length&&t.push(e);for(var f=[];0<Q.length;)f.push(nr());for(var a=[],l="";0<f.length;){var u=f.pop();Q.length||"b"!==u.color?"w"===u.color&&(l.length&&a.push(l),l=b+"."):l=b+". ...",l=l+" "+z(u,!1),er(u)}if(l.length&&a.push(l),void 0!==U.Result&&a.push(U.Result),0===n)return t.join("")+a.join(" ");var s=0;for(i=0;i<a.length;i++)s+a[i].length>n&&0!==i?(" "===t[t.length-1]&&t.pop(),t.push(e),s=0):0!==i&&(t.push(" "),s++),t.push(a[i]),s+=a[i].length;return t.join("")},load_pgn:function(r,e){var n=void 0!==e&&"sloppy"in e&&e.sloppy;function l(r){return r.replace(/\\/g,"\\")}var t="object"==typeof e&&"string"==typeof e.newline_char?e.newline_char:"\r?\n",o=new RegExp("^(\\[((?:"+l(t)+")|.)*\\])(?:"+l(t)+"){2}"),i=o.test(r)?o.exec(r)[1]:"";j();var f=function(r,e){for(var n="object"==typeof e&&"string"==typeof e.newline_char?e.newline_char:"\r?\n",t={},o=r.split(new RegExp(l(n))),i="",f="",a=0;a<o.length;a++)i=o[a].replace(/^\[([A-Z][A-Za-z]*)\s.*\]$/,"$1"),f=o[a].replace(/^\[[A-Za-z]+\s"(.*)"\]$/,"$1"),0<ur(i).length&&(t[i]=f);return t}(i,e);for(var a in f)G([a,f[a]]);if("1"===f.SetUp&&!("FEN"in f&&B(f.FEN,!0)))return!1;var u=r.replace(i,"").replace(new RegExp(l(t),"g")," ");u=u.replace(/(\{[^}]+\})+?/g,"");for(var s=/(\([^\(\)]+\))+?/g;s.test(u);)u=u.replace(s,"");var p=ur(u=(u=(u=u.replace(/\d+\.(\.\.)?/g,"")).replace(/\.\.\./g,"")).replace(/\$\d+/g,"")).split(new RegExp(/\s+/));p=p.join(",").replace(/,,+/g,",").split(",");for(var c="",v=0;v<p.length-1;v++){if(null==(c=tr(p[v],n)))return!1;er(c)}if(c=p[p.length-1],-1<g.indexOf(c))!function(r){for(var e in r)return 1}(U)||void 0!==U.Result||G(["Result",c]);else{if(null==(c=tr(c,n)))return!1;er(c)}return!0},header:function(){return G(arguments)},ascii:function(){return function(){for(var r="   +------------------------+\n",e=N.a8;e<=N.h1;e++){if(0===ir(e)&&(r+=" "+"87654321"[or(e)]+" |"),null==O[e])r+=" . ";else{var n=O[e].type;r+=" "+(O[e].color===s?n.toUpperCase():n.toLowerCase())+" "}e+1&136&&(r+="|\n",e+=8)}return r+="   +------------------------+\n",r+="     a  b  c  d  e  f  g  h\n"}()},turn:function(){return q},move:function(r,e){var n=void 0!==e&&"sloppy"in e&&e.sloppy,t=null;if("string"==typeof r)t=tr(r,n);else if("object"==typeof r)for(var o=Z(),i=0,f=o.length;i<f;i++)if(!(r.from!==fr(o[i].from)||r.to!==fr(o[i].to)||"promotion"in o[i]&&r.promotion!==o[i].promotion)){t=o[i];break}if(!t)return null;var a=lr(t);return er(t),a},undo:function(){var r=nr();return r?lr(r):null},clear:function(){return x()},put:function(r,e){return W(r,e)},get:function(r){return i(r)},remove:function(r){return n=i(e=r),O[N[e]]=null,n&&n.type===p&&(k[n.color]=l),F(M()),n;var e,n},perft:function(r){return function r(e){for(var n=Z({legal:!1}),t=0,o=q,i=0,f=n.length;i<f;i++)er(n[i]),X(o)||(0<e-1?t+=r(e-1):t++),nr();return t}(r)},square_color:function(r){if(r in N){var e=N[r];return(or(e)+ir(e))%2==0?"light":"dark"}return null},history:function(r){for(var e=[],n=[],t=(void 0!==r&&"verbose"in r&&r.verbose);0<Q.length;)e.push(nr());for(;0<e.length;){var o=e.pop();t?n.push(lr(o)):n.push(z(o)),er(o)}return n}}};"undefined"!=typeof exports&&(exports.Chess=Chess),"undefined"!=typeof define&&define(function(){return Chess});
+</script>
+<script>
+const GL={p:"♟",n:"♞",b:"♝",r:"♜",q:"♛",k:"♚"},VS="\uFE0E";
+const de=s=>s;
+const $=id=>document.getElementById(id);
+
+/* ===== REPERTOIRE: moves in English notation (N=knight, B=bishop, R=rook, Q=queen), Kommentare in {…} ===== */
+const REP={
+w:{col:"w",lines:[
+["1...d5 2.Bf4 Nf6 3.e3 e6 (Main setup)","d4 d5 Bf4 {The bishop develops before e3—the key idea of the London System.} Nf6 e3 e6 Nf3 Bd6 Bg3 O-O Nbd2 c5 c3 Nc6 Bd3 {The standard setup is ready. Plans include Ne5, Qe2, castling, h3, and Bh2 if ...Bxg3.}"],
+["...c5 and ...Nc6 (after ...Nf6)","d4 d5 Bf4 Nf6 e3 c5 c3 Nc6 Nd2 e6 Ngf3 Bd6 Bg3 O-O Bd3 {The same structure applies. After ...Bxg3 hxg3, the h-file is half-open, which is fine.}"],
+["...Bf5 (bishop trade)","d4 d5 Bf4 Nf6 e3 Bf5 Nf3 e6 Bd3 Bxd3 Qxd3 Bd6 Bxd6 Qxd6 Nbd2 {After the bishop trade, keep the position solid and prepare e4.}"],
+["1...d5 2.Bf4 c5 (early)","d4 d5 Bf4 c5 e3 Nc6 c3 Nf6 Nd2 e6 Ngf3 Bd6 Bg3 O-O Bd3 {This transposes into the same setup as above.}"],
+["...c5 3.e3 Qb6","d4 d5 Bf4 c5 e3 Qb6 Qc1 {...Qb6 attacks b2; Qc1 safely protects the pawn.} Nc6 c3 Nf6 Nf3 {Then develop Nbd2 and Bd3/Be2; the queen on c1 supports the bishop.}"],
+["1...Nf6 2.Bf4 g6 (King’s Indian setup)","d4 Nf6 Bf4 g6 Nf3 Bg7 e3 O-O h3 {h3 gives the bishop a retreat square on h2 and supports a later g4.} d6 Be2 Nbd7 c3 {The plan is to castle, develop Nbd2, and then play e4.}"],
+["1...e6 (transposition)","d4 e6 Bf4 d5 e3 Nf6 Nf3"]
+]},
+b:{col:"b",lines:[
+["Najdorf: 6.Be3 (English Attack)","e4 c5 {The Sicilian fights for d4 and creates queenside counterplay.} Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 a6 {In the Najdorf, ...a6 prevents Nb5/Bb5 ideas and prepares ...b5.} Be3 e5 Nb3 Be6 f3 Be7 Qd2 O-O O-O-O Nbd7 {Plan ...b5, ...Rc8, and ...Nb6. White may attack with g4-g5 and h4; counter with ...d5 or ...Nb6.}"],
+["Najdorf: 6.Bg5","e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 a6 Bg5 e6 f4 Be7 Qf3 Qc7 O-O-O Nbd7 {Plan ...b5, ...Bb7, and ...Rc8. Watch for Bxf6 and f5 sacrifices.}"],
+["Najdorf: 6.Be2","e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 a6 Be2 e5 Nb3 Be7 O-O O-O Be3 Be6 {A main Open Najdorf setup: ...Qc7, ...Nbd7, ...Rfc8, and ...b5.}"],
+["Najdorf: 6.Bc4","e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 a6 Bc4 e6 Bb3 b5 O-O Be7 {...b5 and ...Bb7 create quick counterplay. Watch for Qf3 and e5 tactics.}"],
+["Moscow Variation 3.Bb5+","e4 c5 Nf3 d6 Bb5+ Bd7 Bxd7+ Qxd7 c4 Nc6 Nc3 Nf6 O-O g6 d4 cxd4 Nxd4 Bg7 {Fianchetto the bishop to pressure d4. White gains some space, but your position stays solid.}"],
+["Alapin 2.c3","e4 c5 c3 Nf6 e5 Nd5 d4 cxd4 cxd4 d6 Nf3 Nc6 Bc4 Nb6 Bb3 dxe5 Nxe5 Nxe5 dxe5 Qxd1+ Kxd1 {The queen trade leads to a practically equal position. Plan ...Bd7/...Bf5, ...Nd5, and ...g6.}"],
+["Closed Sicilian 2.Nc3","e4 c5 Nc3 Nc6 g3 g6 Bg2 Bg7 d3 d6 f4 e6 Nf3 Nge7 O-O O-O {In the Closed Sicilian, prepare ...b6/...Rb8 and the ...d5 break.}"],
+["Grand Prix Attack 2.f4","e4 c5 f4 Nc6 Nf3 g6 Bc4 Bg7 O-O e6 d3 Nge7 c3 O-O {Against e4 and f5, prepare ...d5 or ...f5.}"],
+["Smith-Morra Gambit 2.d4","e4 c5 d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 d6 Bc4 e6 O-O Nf6 Qe2 Be7 {You have an extra pawn: stay compact with ...e6, ...Nf6, ...Be7, and castling, then trade pieces.}"]
+]}};
+
+const OPENINGS={
+ w:[
+  {name:"London System",description:"A solid setup with d4 and Bf4.",col:"w",lines:REP.w.lines},
+  {name:"Italian Game",description:"1.e4 e5 · develop quickly toward the kingside.",col:"w",lines:[
+   ["Giuoco Piano","e4 e5 Nf3 Nc6 Bc4 Bc5 c3 Nf6 d3 d6 O-O O-O Re1"],
+   ["Two Knights Defense","e4 e5 Nf3 Nc6 Bc4 Nf6 d3 Be7 O-O O-O"]
+  ]},
+  {name:"Ruy Lopez",description:"1.e4 e5 · put pressure on the c6 knight.",col:"w",lines:[
+   ["Closed Ruy Lopez","e4 e5 Nf3 Nc6 Bb5 a6 Ba4 Nf6 O-O Be7 Re1 b5 Bb3 d6 c3"],
+   ["Berlin Defense","e4 e5 Nf3 Nc6 Bb5 Nf6 O-O Nxe4 d4 Nd6 Bxc6 dxc6"]
+  ]},
+  {name:"Queen's Gambit",description:"1.d4 d5 2.c4 · fight for the center.",col:"w",lines:[
+   ["Queen's Gambit Declined","d4 d5 c4 e6 Nc3 Nf6 Bg5 Be7 e3 O-O Nf3"],
+   ["Slav Defense","d4 d5 c4 c6 Nc3 Nf6 Nf3 e6 e3"]
+  ]}
+ ],
+ b:[
+  {name:"Sicilian Defense",description:"1.e4 c5 · create queenside counterplay.",col:"b",lines:REP.b.lines},
+  {name:"French Defense",description:"1.e4 e6 · build a solid center with ...d5.",col:"b",lines:[
+   ["Classical French","e4 e6 d4 d5 Nc3 Nf6 e5 Nfd7 f4 c5"],
+   ["Tarrasch Variation","e4 e6 d4 d5 Nd2 c5 exd5 exd5 Ngf3 Nc6"]
+  ]},
+  {name:"Caro-Kann Defense",description:"1.e4 c6 · build a solid pawn structure.",col:"b",lines:[
+   ["Classical Variation","e4 c6 d4 d5 Nc3 dxe4 Nxe4 Bf5 Ng3 Bg6"],
+   ["Advance Variation","e4 c6 d4 d5 e5 Bf5 Nf3 e6 Be2 c5"]
+  ]},
+  {name:"King's Indian Defense",description:"1.d4 Nf6 · develop with a kingside fianchetto.",col:"b",lines:[
+   ["Classical Setup","d4 Nf6 c4 g6 Nc3 Bg7 e4 d6 Nf3 O-O Be2 e5 O-O"],
+   ["Fianchetto Setup","d4 Nf6 c4 g6 Nf3 Bg7 g3 O-O Bg2 d6 O-O Nbd7"]
+  ]}
+ ]
+};
+const WHY_BY_LINE={
+"1...d5 2.Bf4 Nf6 3.e3 e6 (Main setup)":"After ...d5, the center is fixed. Bf4 develops before e3 so the bishop does not get trapped behind your pawn chain; e3 then supports d4.",
+"...c5 and ...Nc6 (after ...Nf6)":"...c5 attacks your center. c3 and Nd2 support d4 together, so you can hold the pawn and later counter with e4 or c4.",
+"...Bf5 (bishop trade)":"Black develops the bishop actively. Nf3 and Bd3 challenge it; if the bishops trade, Qxd3 keeps your pawn structure intact.",
+"1...d5 2.Bf4 c5 (early)":"Because ...c5 attacks d4 early, c3 reinforces the center before e3 restricts your bishop on f4.",
+"...c5 3.e3 Qb6":"...Qb6 attacks b2. Qc1 protects the pawn without loosening your queenside with b3.",
+"1...Nf6 2.Bf4 g6 (King’s Indian setup)":"...g6 signals a fianchetto and pressure on the center. Nf3 helps control e5 and prepares e3 and castling.",
+"1...e6 (transposition)":"After ...e6, ...d5 is likely. Bf4 develops the bishop before e3 closes its diagonal.",
+"Giuoco Piano":"After ...e5, Nf3 attacks the pawn and develops. Once ...Nc6 protects it, Bc4 targets f7 and c3 prepares the central d4 break.",
+"Two Knights Defense":"...Nf6 attacks your e4 pawn. d3 supports e4 and keeps the position calm instead of allowing immediate tactical complications after d4.",
+"Closed Ruy Lopez":"After ...Nc6, Bb5 pins a key defender of e5. If ...a6 comes, Ba4 preserves that pressure instead of trading the bishop for the knight.",
+"Berlin Defense":"After ...Nf6, castle before opening the center. If ...Nxe4, d4 attacks the knight before Black can consolidate the extra pawn.",
+"Queen's Gambit Declined":"...d5 occupies the center. c4 challenges the d5 pawn directly; Nc3 and Bg5 add pressure to d5 and e4.",
+"Slav Defense":"...c6 supports the d5 pawn with another pawn. Nc3 and Nf3 develop while maintaining pressure on d5, and e3 keeps the center stable.",
+"Najdorf: 6.Be3 (English Attack)":"In the Najdorf, ...a6 prevents Nb5/Bb5 ideas and prepares ...b5. Against the English Attack, ...e5 closes the center and gives you time for queenside counterplay.",
+"Najdorf: 6.Bg5":"After Bg5, ...e6 supports d6 and prepares ...Be7. This keeps the position solid while you develop and castle.",
+"Najdorf: 6.Be2":"Against the quiet Be2, ...e5 gains space and challenges the knight on d4.",
+"Najdorf: 6.Bc4":"Bc4 targets f7. ...e6 blocks that diagonal and prepares ...b5 to gain queenside space with tempo.",
+"Moscow Variation 3.Bb5+":"After Bb5+, ...Bd7 blocks the check while developing. If White trades on d7, the queen recaptures and you can build pressure on d4 with ...g6 and ...Bg7.",
+"Alapin 2.c3":"White prepares d4 with c3. ...Nf6 attacks e4 with tempo and often provokes e5; then ...Nd5 blocks White’s space-gaining center.",
+"Closed Sicilian 2.Nc3":"White develops without playing d4. ...Nc6 develops and adds pressure to d4; ...g6 and ...Bg7 then build long-diagonal pressure.",
+"Grand Prix Attack 2.f4":"f4 signals a kingside attack. ...Nc6 and ...g6 develop toward e5; ...e6 supports f5 and prepares the central ...d5 break.",
+"Smith-Morra Gambit 2.d4":"After c3, you accept the pawn instead of giving it back. With an extra pawn, solid development and piece trades are preferable to unnecessary complications.",
+"Classical French":"After e4 e6, ...d5 claims the center. If White advances e5, Nfd7 saves the attacked knight and prepares the ...c5 counterattack.",
+"Tarrasch Variation":"Nd2 avoids a pin by ...Bb4. ...c5 immediately attacks d4 before White can reinforce the center.",
+"Classical Variation":"After ...c6 and ...d5, White’s Nc3 adds pressure to d5. ...dxe4 reduces White’s center and opens the way for your bishop to develop to f5.",
+"Advance Variation":"White closes the center with e5. ...Bf5 develops the bishop outside your pawn chain; ...c5 then attacks the base of White’s center on d4.",
+"Classical Setup":"...Nf6 and ...g6 prepare the bishop for g7. After White plays e4, ...d6 supports the center and prepares the typical ...e5 break while your king castles safely.",
+"Fianchetto Setup":"This setup builds long-term pressure on the center instead of rushing ...e5. ...Bg7 and castling secure your king; ...d6 and ...Nbd7 prepare the right central break."
+};
+function reasonForLine(line){return line?(WHY_BY_LINE[line[0]]||"This continuation responds to the opponent’s setup, keeps your position stable, and prepares a matching plan."):""}
+const WHY_ALTERNATIVE={
+"1...d5 2.Bf4 Nf6 3.e3 e6 (Main setup)":"Why not play e3 first? It is playable, but it traps the c1 bishop behind your pawn chain.",
+"...c5 and ...Nc6 (after ...Nf6)":"Why not play c4? c3 keeps d4 protected and prepares e4 without giving up control of the center.",
+"...Bf5 (bishop trade)":"Why not leave the bishop in place? Bd3 challenges it before Black can comfortably play ...e6 and keep it active.",
+"1...d5 2.Bf4 c5 (early)":"Why not play e3 immediately? c3 supports d4 against ...c5 and keeps the bishop on f4 active.",
+"...c5 3.e3 Qb6":"Why not play b3? It weakens b2 and gives the queenside attack another target; Qc1 defends without moving a pawn.",
+"1...Nf6 2.Bf4 g6 (King’s Indian setup)":"Why not play e3 first? Nf3 develops and helps control the key central squares e5 and d4.",
+"1...e6 (transposition)":"Why not play Nf3 first? Bf4 uses the chance to develop the bishop before e3 closes its diagonal.",
+"Giuoco Piano":"Why not play d4 immediately? c3 supports the advance and keeps the center stable before opening the position.",
+"Two Knights Defense":"Why not play d4? After ...Nf6, e4 needs support; d3 protects it and avoids tactical complications.",
+"Closed Ruy Lopez":"Why not take on c6? Keeping the bishop preserves the pin and pressure; you can still exchange it later.",
+"Berlin Defense":"Why not ignore the knight on e4? d4 attacks it directly before Black can hold onto the extra pawn.",
+"Queen's Gambit Declined":"Why not exchange on d5? c4 keeps the tension and asks Black to decide how to resolve the center.",
+"Slav Defense":"Why not exchange on d5? Keeping the tension lets you increase pressure before committing to a trade.",
+"Najdorf: 6.Be3 (English Attack)":"Why not play ...e6? ...e5 gains space and challenges the knight on d4, though it can later allow f4-f5.",
+"Najdorf: 6.Bg5":"Why not play ...e5? ...e6 supports d6 and keeps development flexible; ...e5 can leave d6 as a target.",
+"Najdorf: 6.Be2":"Why not play ...e6? ...e5 takes advantage of White’s quiet bishop move to gain space and question the knight on d4.",
+"Najdorf: 6.Bc4":"Why not play ...e5? ...e6 blocks the bishop’s diagonal toward f7 and prepares ...b5.",
+"Moscow Variation 3.Bb5+":"Why not move the king? ...Bd7 blocks the check while developing and allows a favorable bishop trade.",
+"Alapin 2.c3":"Why not play ...d5 immediately? ...Nf6 attacks e4 with tempo and often makes White advance to e5 before you undermine the center.",
+"Closed Sicilian 2.Nc3":"Why not play ...d5 immediately? ...Nc6 develops and adds pressure to d4 while keeping the central break available.",
+"Grand Prix Attack 2.f4":"Why not play ...d6 right away? ...Nc6 develops and adds support for the later ...d5 counterbreak.",
+"Smith-Morra Gambit 2.d4":"Why accept the gambit instead of declining it? Accepting wins a pawn; after that, solid development matters more than giving it back.",
+"Classical French":"Why not play ...c5 immediately? ...d5 first claims the center and gives the later ...c5 break a clear target.",
+"Tarrasch Variation":"Why not play ...Nf6? ...c5 attacks d4 immediately, before White can reinforce it with the knight on d2.",
+"Classical Variation":"Why not leave the pawn on e4? ...dxe4 reduces White’s center and opens a route for your bishop to f5.",
+"Advance Variation":"Why not play ...e6 first? ...Bf5 develops the bishop outside your pawn chain before e6 closes its diagonal.",
+"Classical Setup":"Why not play ...d5? ...d6 keeps the setup flexible and prepares ...e5 while the bishop on g7 pressures the center.",
+"Fianchetto Setup":"Why not play ...e5 immediately? The fianchetto setup delays the central break until your king and pieces are safely developed."
+};
+function alternativeForLine(line){return WHY_ALTERNATIVE[line[0]]||"Other moves are possible, but they follow a different plan. This line is chosen to fit the opponent’s setup."}
+const key=g=>g.fen().split(" ").slice(0,3).join(" ");
+function build(R){const G={},nd=k=>G[k]||(G[k]={opp:[]});
+ R.lines.forEach(L=>{const g=new Chess();L.m=[];let lk=null;
+  for(const t of L[1].match(/\{[^}]*\}|\S+/g)){
+   if(t[0]==="{"){if(lk)nd(lk).note=t.slice(1,-1);continue}
+   const n=nd(key(g)),mine=g.turn()===R.col;
+   let moved=null;try{moved=g.move(t)}catch(e){console.warn("Invalid move:",L[0],t,e);break}if(!moved){console.warn("Invalid move:",L[0],t);break}
+   if(mine){if(!n.my)n.my=t;else if(n.my!==t)console.warn("Konflikt:",L[0],t)}
+   else if(!n.opp.includes(t))n.opp.push(t);
+   L.m.push(t);lk=key(g);nd(lk)}});
+ return G}
+
+let R,G,g,F,ply,err,done,busy,sel,tg=[],hint=[],last=null,st={d:0,p:0,xp:0,run:0,best:0},journeyMessage="Make your first move and earn experience.",dragGhost=null;
+let waitingForBranch=false,selectedLine=0,selectedOpening=0,side="w",SIDE_DATA=[],currentLine=null,theoryComment="",lastUserSan=null,botMode=false,botBusy=false;
+let dragFrom=null,dragStart=null,isDragging=false,suppressNextClick=false,audioCtx=null,botTimer=null,pendingPromotions=[];
+try{st={...st,...(JSON.parse(localStorage.getItem("ct")||"null")||{})}}catch(e){}
+const GR={};
+
+function say(t,c){const m=$("msg");m.textContent=t;m.className=c||""}
+function exp(){const n=G[key(g)];return n&&n.my}
+function expMove(){const e=exp();return g.moves({verbose:true}).find(m=>m.san===e)}
+function mineTurn(){return g.turn()===R.col}
+
+function explainMove(san, beforeFen){
+ const piece = ({S:"Knight",N:"Knight",L:"Bishop",B:"Bishop",T:"Rook",R:"Rook",D:"Queen",Q:"Queen",K:"King"})[san[0]] || "Pawn";
+ if(san==="O-O") return "Kingside castling: the king moves to safety and the rook becomes active.";
+ if(san==="O-O-O") return "Queenside castling: the king moves to safety and the rook becomes active.";
+ if(san.includes("#")) return "Checkmate: the opposing king has no legal escape.";
+ if(san.includes("+")) return "Check: the opposing king must respond.";
+ if(san.includes("=")) return "Promotion: the pawn reaches the last rank and usually becomes a queen.";
+ if(san.includes("x")) return piece+" captures an opposing piece. Check whether this opens a line or frees a square.";
+ if(san.startsWith("e") || san.startsWith("d") || san.startsWith("c") || san.startsWith("f") || san.startsWith("g") || san.startsWith("b") || san.startsWith("a") || san.startsWith("h"))
+  return "Pawn move: it claims space, opens lines, or supports piece development.";
+ return piece+" is developed or repositioned to improve activity and control important squares.";
+}
+function renderBranches(){
+ const box=$("branches"); if(!box)return;
+ const n=G[key(g)];
+ if(!waitingForBranch || !n || !n.opp.length){
+  box.innerHTML='<span class="sub">If several repertoire replies are available, they will appear here as selectable moves.</span>';
+  return;
+ }
+ box.innerHTML='<div class="branchgroup"><div class="branchlabel">Possible opponent replies</div><div class="branchbuttons">'+
+ n.opp.map((s,i)=>'<button data-branch="'+i+'">'+de(s)+' <span>Line '+(i+1)+'</span></button>').join('')+
+ '</div></div>';
+}
+
+const RANKS=[{xp:0,name:"Opening beginner"},{xp:60,name:"Move explorer"},{xp:150,name:"Tactics scout"},{xp:300,name:"Variation expert"},{xp:500,name:"Opening expert"}];
+function saveStats(){try{localStorage.setItem("ct",JSON.stringify(st))}catch(e){}}
+function renderJourney(){
+ const points=Number(st.xp)||0;let level=0;for(let i=0;i<RANKS.length;i++)if(points>=RANKS[i].xp)level=i;
+ const next=RANKS[level+1],low=RANKS[level].xp;
+ $("rank").textContent=RANKS[level].name;
+ $("xp").textContent=points+" XP";
+ $("xpfill").style.width=(next?Math.min(100,(points-low)/(next.xp-low)*100):100)+"%";
+ $("journeyStats").innerHTML="<span>🔥 "+(Number(st.run)||0)+"-move streak · Best: "+(Number(st.best)||0)+"</span><span>♟ "+(Number(st.d)||0)+" lines completed</span>";
+ $("journeyMsg").textContent=journeyMessage;
+}
+function rewardMove(){
+ st.run=(Number(st.run)||0)+1;st.best=Math.max(Number(st.best)||0,st.run);
+ const bonus=st.run>1?Math.min(10,(st.run-1)*2):0,points=10+bonus+(st.run%5===0?15:0);
+ st.xp=(Number(st.xp)||0)+points;
+ journeyMessage=st.run%5===0?"🔥 "+st.run+" moves in a row! Bonus earned.":(["Great! You found the move.","Well played — keep it up!","That is exactly the right idea.","Great recall! Your knowledge is growing."][(st.run-1)%4])+" +"+points+" XP";
+ saveStats();
+}
+function wrongAttempt(){err++;st.run=0;journeyMessage="Close! Your streak will restart with your next correct move.";saveStats()}
+function render(){
+ const B=g.board(),fl=R.col==="b",checkColor=g.in_check()?g.turn():null;
+ const e=(!botMode&&!done&&!busy&&mineTurn()&&$("learn").checked)?expMove():null;
+ const hs=hint.length?hint:(e?[e.from,e.to]:[]);
+ let h="";
+ for(let i=0;i<8;i++)for(let j=0;j<8;j++){
+  const r=fl?7-i:i,f=fl?7-j:j,p=B[r][f],s="abcdefgh"[f]+(8-r);
+  let c="sq "+((r+f)%2?"d":"l");
+  if(last&&(s===last[0]||s===last[1]))c+=" last";
+  if(sel===s)c+=" sel";if(checkColor&&p&&p.type==="k"&&p.color===checkColor)c+=" check";if(dragFrom===s)c+=" drag-source";if(tg.includes(s))c+=" tgt";if(hs.includes(s))c+=" hint";
+  h+=`<div class="${c}" data-s="${s}">${p?`<span class="pc ${p.color}">${GL[p.type]}${VS}</span>`:""}${$("coords").checked&&j===0?`<i class="rk">${8-r}</i>`:""}${$("coords").checked&&i===7?`<i class="fl">${"abcdefgh"[f]}</i>`:""}</div>`;
+ }
+ $("board").innerHTML=h;
+ let o="";g.history().forEach((s,i)=>o+=(i%2?"":(i/2+1)+". ")+de(s)+" ");
+ $("mv").textContent=o||"–";
+ const hist=$("history");hist.innerHTML="";
+ const historyMoves=g.history({verbose:true});historyMoves.forEach((m,i)=>{
+  const item=document.createElement("div");item.className="moveitem"+(i===historyMoves.length-1?" latest":"");
+  const num=document.createElement("strong");num.textContent=(Math.floor(i/2)+1)+(i%2?" ...":".");
+  const body=document.createElement("p");body.textContent=de(m.san);
+  item.append(num,body);hist.append(item);
+ });
+ renderBranches();renderJourney();renderTheory();renderCaptured();renderBotActions();
+ $("st").textContent="Completed: "+st.d+" · perfect: "+st.p;
+}
+function renderCaptured(){
+ if(!botMode)return;
+ const byYou=[],byBot=[];
+ for(const m of g.history({verbose:true})){
+  if(!m.captured)continue;
+  const piece='<span class="capture-piece '+(m.color===R.col?"b":"w")+'">'+(GL[m.captured]||"")+'</span>';
+  (m.color===R.col?byYou:byBot).push(piece);
+ }
+ $("capturedByYou").innerHTML=byYou.join("")||"—";
+ $("capturedByBot").innerHTML=byBot.join("")||"—";
+}
+function renderBotActions(){
+ if(!botMode)return;
+ $("botGameActions").hidden=false;
+ $("undoBot").disabled=g.history().length===0;
+ $("resignBot").disabled=done;
+ $("newBot").disabled=false;
+}function movePurpose(san,game){
+ const to=san.match(/([a-h][1-8])(?:=[QRBN])?[+#]?$/)?.[1]||"the destination square";
+ if(san==="O-O"||san==="O-O-O")return "Castling is the priority here: it brings the king to safety and connects your rooks.";
+ if(san.includes("x"))return "This capture removes a defender or central piece and changes the balance in the position. Check what becomes less protected after the exchange.";
+ if(san[0]==="N")return "Developing the knight improves control of central squares and brings a new piece into play.";
+ if(san[0]==="B")return "The bishop develops to an active diagonal, where it can influence the center and support your next plan.";
+ if(san[0]==="R"||san[0]==="Q")return "This move improves the piece by placing it on "+to+", where it can support the coming central or file pressure.";
+ if(san[0]==="K")return "The king move improves king safety or supports the endgame plan in this position.";
+ if(san.startsWith("e3")&&game){
+  const b=game.get("c1");
+  if(b&&b.type==="b")return "e3 reinforces the d4 pawn and opens the diagonal for the bishop on c1. A developing move such as Nf3 is also natural, but it leaves that bishop undeveloped and gives d4 less support for now.";
+ }
+ if(san.startsWith("e4")||san.startsWith("d4"))return "This central pawn move claims space, influences key squares, and gives your pieces room to develop. A flank move would have less impact on the center.";
+ if("edcfgbah".includes(san[0]))return "This pawn move supports the central structure and prepares a route for your pieces. A piece move may be possible too, but this pawn move addresses the position’s immediate needs.";
+ return "This move improves coordination and prepares your next plan while keeping the position sound.";
+}
+function moveAlternative(san,game){
+ if(!game)return "Other moves may be playable, but this choice best fits the current position and the plan of this line.";
+ const legal=game.moves();
+ const candidate=legal.find(m=>m!==san&&("edcfgbah".includes(san[0])?m[0]==="N":"edc".includes(m[0])));
+ if(!candidate)return "There are other legal moves, but this one follows the line’s plan and responds to the current position.";
+ const isPawn="edcfgbah".includes(candidate[0]);
+ if(isPawn)return "A move such as "+candidate+" is also legal, but it commits a pawn structure now. "+san+" develops or coordinates a piece while keeping more pawn options available.";
+ return "A move such as "+candidate+" is also worth considering, but it does not address the same priority as "+san+". You can often play it later, once this central or development task is handled.";
+}
+function renderTheory(){
+ if(!currentLine)return;
+ const mine=mineTurn(),index=mine?ply:ply+1,next=F&&F[index];
+ $("theoryLine").textContent=R.name+" · "+currentLine[0];
+ if(!next){
+  $("theoryMove").textContent=lastUserSan?"Last move: "+de(lastUserSan):"Choose an opening move.";
+  $("theoryWhy").textContent=lastUserSan?"You have reached the end of this line. Review the position and the plans you practised.":"Move-by-move explanations will appear here as you train.";
+  $("theoryAlternative").textContent="";
+  $("theoryComment").textContent=theoryComment?"Position note: "+theoryComment:"";
+  return;
+ }
+ const before=new Chess();let valid=true;
+ for(let i=0;i<index;i++){if(!F[i]||!before.move(F[i])){valid=false;break}}
+ $("theoryMove").textContent=(mine?"Your move: ":"After the opponent’s reply, your move: ")+de(next);
+ $("theoryWhy").textContent=movePurpose(next,valid?before:null);
+ $("theoryAlternative").textContent=moveAlternative(next,valid?before:null);
+ $("theoryComment").textContent=theoryComment?"Position note: "+theoryComment:"These explanations update for every move in your line.";
+}
+function playMoveSound(capture=false){
+ if(!$("sound")?.checked)return;
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  if(!audioCtx)audioCtx=new AC();if(audioCtx.state==="suspended")audioCtx.resume();
+  const now=audioCtx.currentTime,mode=$("soundStyle").value;
+  const tone=(f0,f1,type,duration,volume)=>{
+   const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;
+   o.frequency.setValueAtTime(f0,now);o.frequency.exponentialRampToValueAtTime(f1,now+duration);
+   g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(volume,now+.003);
+   g.gain.exponentialRampToValueAtTime(.0001,now+duration);o.connect(g);g.connect(audioCtx.destination);
+   o.start(now);o.stop(now+duration+.01);
+  };
+  if(mode==="glass"){tone(capture?720:920,capture?390:570,"sine",.19,.075);tone(capture?1080:1320,720,"sine",.11,.025);return}
+  if(mode==="retro"){tone(capture?270:440,capture?120:210,"square",.09,.035);return}
+  if(mode==="soft"){tone(capture?150:205,capture?75:95,"sine",.105,.055);return}
+  if(mode==="wood")tone(capture?125:175,capture?48:62,"sine",.12,capture?.13:.10);
+  const size=Math.floor(audioCtx.sampleRate*(mode==="type"?.018:.026)),buffer=audioCtx.createBuffer(1,size,audioCtx.sampleRate),data=buffer.getChannelData(0);
+  for(let i=0;i<size;i++)data[i]=(Math.random()*2-1)*(1-i/size);
+  const src=audioCtx.createBufferSource(),filter=audioCtx.createBiquadFilter(),gain=audioCtx.createGain();
+  src.buffer=buffer;filter.type=mode==="type"?"highpass":"lowpass";filter.frequency.value=mode==="type"?1900:1050;
+  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(mode==="type"?.065:.05,now+.002);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+(mode==="type"?.018:.026));
+  src.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);src.start(now);
+ }catch(e){console.warn("Move sound unavailable:",e)}
+}
+function play(s){
+ const wasMyMove=mineTurn(),m=g.move(s);
+ if(!m)return;
+ playMoveSound(!!m.captured);
+ last=[m.from,m.to];ply++;sel=null;tg=[];hint=[];waitingForBranch=false;
+ if(wasMyMove)lastUserSan=m.san;return m;
+}
+function opp(){
+ const n=G[key(g)];
+ if(F){
+  busy=true;setTimeout(()=>{busy=false;const s=F[ply];if(!s)return fin();play(s);after()},420);
+  return;
+ }
+ if(!n || !n.opp.length)return fin();
+ if(n.opp.length===1){
+  busy=true;setTimeout(()=>{busy=false;play(n.opp[0]);after()},420);
+ }else{
+  waitingForBranch=true;
+  say("The opponent has several recorded replies. Choose a variation.");
+  render();
+ }
+}
+function after(){
+ const n=G[key(g)];
+ theoryComment=n&&n.note||"";
+ const mine=mineTurn(),end=F?ply>=F.length:(mine?!(n&&n.my):!(n&&n.opp.length));
+ render();if(end)return fin();if(!mine)opp()
+}
+function fin(){if(done)return;done=true;st.d++;if(!err)st.p++;st.xp=(Number(st.xp)||0)+20;journeyMessage="✨ Line complete! +20 XP completion bonus.";saveStats();
+ try{localStorage.setItem("ct",JSON.stringify(st))}catch(e){}
+ say(err?"✓ Line completed with "+err+" incorrect attempt(s). Continue with “Restart / next line”.":"✓ Perfect! Continue with “Restart / next line”.","ok");render()}
+
+function start(){
+ g=new Chess();
+ const line=R.lines[selectedLine]||R.lines[0];currentLine=line;F=line.m;theoryComment="";lastUserSan=null;
+ ply=0;err=0;done=false;busy=false;waitingForBranch=false;dragFrom=null;dragStart=null;isDragging=false;suppressNextClick=false;sel=null;tg=[];hint=[];last=null;
+ say(R.name+": "+line[0]);
+ renderVariantTiles();render();if(!mineTurn())opp()
+}
+function categoryInfo(line){
+ let seenOwn=false;
+ for(let i=0;i<line.m.length;i++){
+  const mover=i%2===0?"w":"b";
+  if(mover===R.col){seenOwn=true;continue}
+  if(seenOwn){
+   const n=Math.floor(i/2)+1,prefix=mover==="w"?n+".":n+"…";
+   const san=line.m[i],name=de(san);
+   const descriptions={d5:"Central counterplay",Nf6:"Flexible development",e6:"Solid setup",c5:"Sicilian counterplay",Nf3:"Open development",c3:"Alapin setup",Nc3:"Closed game",f4:"f-pawn attack",d4:"Open main line","Bb5+":"Moscow variation"};
+   const base=san.replace(/[+#].*$/,"");
+   return {key:san,label:prefix+" "+name,description:descriptions[base]||"Other reply"};
+  }
+ }
+ return {key:"other",label:"No reply",description:"Short line"};
+}
+function renderVariantTiles(){
+ const info=R.lines.map((line,index)=>({line,index,info:categoryInfo(line)})),counts={};
+ info.forEach(x=>counts[x.info.key]=(counts[x.info.key]||0)+1);
+ $("variantTiles").innerHTML=info.map(x=>{
+  const tag=x.info.label+(counts[x.info.key]>1?" · "+(info.filter(y=>y.info.key===x.info.key&&y.index<=x.index).length):"");
+  return '<button class="variant-tile'+(x.index===selectedLine?' active':'')+'" data-line="'+x.index+'"><span class="tile-move">'+tag+'</span><span class="tile-title">'+x.line[0]+'</span></button>';
+ }).join("");
+}
+function renderOpeningTiles(){
+ $("openingTiles").innerHTML=SIDE_DATA.map((o,i)=>'<button class="opening-tile'+(i===selectedOpening?' active':'')+'" data-opening="'+i+'"><span class="opening-name">'+o.name+'</span><span class="opening-desc">'+o.description+'</span></button>').join("");
+}
+function selectOpening(index){
+ selectedOpening=index;R=SIDE_DATA[index];R.name=R.name;G=build(R);selectedLine=0;
+ renderOpeningTiles();renderVariantTiles();start()
+}
+function setSide(k){
+ side=k;SIDE_DATA=OPENINGS[k];selectedOpening=0;
+ document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.r===k));
+ renderOpeningTiles();selectOpening(0)
+}
+function finishBotGame(){
+ if(!g.game_over())return false;
+ done=true;botBusy=false;
+ if(g.in_checkmate())say(g.turn()===R.col?"Checkmate — the bot wins.":"Checkmate — you win!","ok");
+ else if(g.in_stalemate())say("Draw by stalemate.");
+ else if(g.in_draw())say("The game is a draw.");
+ else say("Game over.");
+ render();return true;
+}
+function pickMoveAt(from,to){
+ const options=g.moves({square:from,verbose:true}).filter(m=>m.to===to);
+ if(!options.length)return false;
+ if(options.length>1&&options[0].promotion){
+  pendingPromotions=options;
+  $("promotionTitle").textContent="Choose a promotion";
+  $("promotionOptions").innerHTML=options.map(m=>'<button type="button" data-promotion="'+m.promotion+'" aria-label="'+({q:"Queen",r:"Rook",b:"Bishop",n:"Knight"}[m.promotion]||m.promotion)+'"><span class="pc '+g.turn()+'">'+GL[m.promotion]+'</span></button>').join("");
+  $("promotionPicker").hidden=false;
+  $("promotionOptions").querySelector("button")?.focus();
+  return true;
+ }
+ submitUserMove(options[0].san);return true;
+}
+function undoBotTurn(){
+ if(!botMode||!g||!g.history().length)return;
+ if(botTimer){clearTimeout(botTimer);botTimer=null}
+ const botJustMoved=mineTurn();
+ g.undo();
+ if(botJustMoved&&g.history().length)g.undo();
+ done=false;busy=false;sel=null;tg=[];hint=[];waitingForBranch=false;
+ const history=g.history({verbose:true}),previous=history[history.length-1];last=previous?[previous.from,previous.to]:null;
+ say("The last turn was taken back.");render();
+}
+function resignBotGame(){
+ if(!botMode||done)return;
+ if(botTimer){clearTimeout(botTimer);botTimer=null}
+ busy=false;done=true;sel=null;tg=[];say("You resigned. The bot wins.","bad");render();
+}
+function closePromotion(){
+ $("promotionPicker").hidden=true;pendingPromotions=[];sel=null;tg=[];render();
+}function submitUserMove(san){
+ if(done||busy||!mineTurn())return;
+ if(botMode){
+  const move=play(san);if(!move)return;
+  render();if(finishBotGame())return;
+  busy=true;say(g.in_check()?"The bot is in check and is thinking…":"The bot is thinking…");render();botTimer=setTimeout(makeBotMove,60);return;
+ }
+ if(san===exp()){rewardMove();play(san);after()}
+ else{wrongAttempt();sel=null;tg=[];hint=[];say("That is not the repertoire move. Try again or use the hint.","bad");const board=$("board");board.classList.remove("sh");void board.offsetWidth;board.classList.add("sh");render()}
+}
+function handleSquare(square){
+ if(done||busy||!mineTurn())return;
+ const piece=g.get(square);
+ if(sel){
+  const move=g.moves({square:sel,verbose:true}).find(m=>m.to===square);
+  if(move){pickMoveAt(sel,square);return}
+ }
+ if(piece&&piece.color===R.col){sel=square;tg=g.moves({square,verbose:true}).map(m=>m.to);render();return}
+ if(sel){sel=null;tg=[];render()}
+}
+const BOT_LEVELS={"300":{depth:1,noise:430,nodes:900},"600":{depth:1,noise:250,nodes:1500},"900":{depth:2,noise:140,nodes:5000},"1200":{depth:2,noise:55,nodes:9000},"1500":{depth:3,noise:10,nodes:22000}};
+function evaluateBotPosition(game,color){
+ if(game.in_checkmate())return game.turn()===color?-100000:100000;
+ if(game.in_draw())return 0;
+ const values={p:100,n:315,b:330,r:500,q:900,k:0};let score=0;const board=game.board();
+ for(let r=0;r<8;r++)for(let f=0;f<8;f++){const p=board[r][f];if(!p)continue;const sign=p.color===color?1:-1,center=3.5-(Math.abs(3.5-r)+Math.abs(3.5-f))/2;let positional=0;if(p.type==="n"||p.type==="b")positional=center*7;if(p.type==="p")positional+=(p.color==="w"?(6-r):(r-1))*4+center*2;if(p.type==="q")positional=center*2;score+=sign*(values[p.type]+positional)}
+ return score
+}
+function searchBot(depth,alpha,beta,color,ctx){
+ if(++ctx.nodes>ctx.limit||depth<=0||g.game_over())return evaluateBotPosition(g,color);
+ const maximizing=g.turn()===color,moves=g.moves({verbose:true});
+ moves.sort((a,b)=>((b.captured?({p:1,n:3,b:3,r:5,q:9}[b.captured]||0):0)+(b.promotion?8:0))-((a.captured?({p:1,n:3,b:3,r:5,q:9}[a.captured]||0):0)+(a.promotion?8:0)));
+ let best=maximizing?-Infinity:Infinity;
+ for(const m of moves){g.move(m.san);const value=searchBot(depth-1,alpha,beta,color,ctx);g.undo();if(maximizing){best=Math.max(best,value);alpha=Math.max(alpha,best)}else{best=Math.min(best,value);beta=Math.min(beta,best)}if(beta<=alpha||ctx.nodes>ctx.limit)break}
+ return best===Infinity||best===-Infinity?evaluateBotPosition(g,color):best;
+}
+function makeBotMove(){botTimer=null;
+ busy=false;if(!botMode||done||mineTurn())return;
+ const color=R.col==="w"?"b":"w",profile=BOT_LEVELS[$("botLevel").value]||BOT_LEVELS["900"],moves=g.moves({verbose:true});if(!moves.length){finishBotGame();return}
+ const maximizing=g.turn()===color;let alpha=-Infinity,beta=Infinity;
+ const choices=[];
+ for(const m of moves){const ctx={nodes:0,limit:profile.nodes};g.move(m.san);const score=searchBot(profile.depth-1,alpha,beta,color,ctx);g.undo();choices.push({san:m.san,score});if(maximizing)alpha=Math.max(alpha,score);else beta=Math.min(beta,score)}
+ choices.sort((a,b)=>b.score-a.score);
+ const best=choices[0].score,near=choices.filter(x=>x.score>=best-profile.noise),pick=near[Math.floor(Math.random()*near.length)]||choices[0];
+ play(pick.san);render();if(!finishBotGame())say(g.in_check()?"Check — your king is under attack.":"Your move.",g.in_check()?"bad":"");
+}
+function startBotGame(){if(botTimer){clearTimeout(botTimer);botTimer=null}
+ botMode=true;document.body.classList.add("bot-mode");$("botControls").hidden=false;$("botStart").hidden=true;document.querySelectorAll("#modeTabs button").forEach(b=>b.classList.toggle("on",b.dataset.mode==="bot"));
+ const chosenColor=$("botColor").value,playerColor=chosenColor==="random"?(Math.random()<0.5?"w":"b"):chosenColor;R={col:playerColor,name:"Bot game",lines:[]};g=new Chess();F=null;currentLine=null;theoryComment="";lastUserSan=null;ply=0;done=false;busy=false;waitingForBranch=false;sel=null;tg=[];hint=[];last=null;
+ say((chosenColor==="random"?"Random start — ":"Game started. You are playing ")+(R.col==="w"?"White":"Black")+".");render();if(!mineTurn()){busy=true;say("The bot is thinking…");botTimer=setTimeout(makeBotMove,60)}
+}
+function showTrainerMode(){if(botTimer){clearTimeout(botTimer);botTimer=null}
+ botMode=false;busy=false;document.body.classList.remove("bot-mode");$("botControls").hidden=true;$("botGameActions").hidden=true;$("botStart").hidden=false;document.querySelectorAll("#modeTabs button").forEach(b=>b.classList.toggle("on",b.dataset.mode==="trainer"));setSide(side||"w")
+}$("board").onclick=e=>{
+ if(suppressNextClick){suppressNextClick=false;return}
+ const sq=e.target.closest(".sq");if(sq)handleSquare(sq.dataset.s);
+};
+// Drag a piece with the left mouse button and release it on the destination square.
+$("board").addEventListener("pointerdown",e=>{
+ const sq=e.target.closest(".sq");if(!sq||busy||done||!mineTurn())return;
+ const from=sq.dataset.s,p=g.get(from);if(!p||p.color!==R.col)return;
+ dragFrom=from;dragStart={x:e.clientX,y:e.clientY};isDragging=false;
+});
+document.addEventListener("pointermove",e=>{
+ if(!dragFrom||!dragStart)return;
+ if(!isDragging&&Math.hypot(e.clientX-dragStart.x,e.clientY-dragStart.y)>6){
+  const p=g.get(dragFrom);if(!p)return;
+  isDragging=true;sel=dragFrom;tg=g.moves({square:dragFrom,verbose:true}).map(m=>m.to);
+  dragGhost=document.createElement("span");dragGhost.className="dragghost "+p.color;dragGhost.textContent=GL[p.type]+VS;document.body.appendChild(dragGhost);
+  try{$("board").setPointerCapture(e.pointerId)}catch(err){}
+  render();
+ }
+ if(isDragging&&dragGhost){dragGhost.style.left=e.clientX+"px";dragGhost.style.top=e.clientY+"px"}
+});
+$("board").addEventListener("pointerup",e=>{
+ if(!dragFrom)return;
+ const from=dragFrom,wasDragging=isDragging;dragFrom=null;dragStart=null;isDragging=false;
+ if(!wasDragging)return;
+ const sq=document.elementFromPoint(e.clientX,e.clientY)?.closest(".sq");
+ if(dragGhost){dragGhost.remove();dragGhost=null}
+ if(!sq){suppressNextClick=false;sel=null;tg=[];render();return}
+ suppressNextClick=true;setTimeout(()=>{suppressNextClick=false},500);
+ pickMoveAt(from,sq.dataset.s);
+});
+$("board").addEventListener("pointercancel",()=>{dragFrom=null;dragStart=null;isDragging=false;if(dragGhost){dragGhost.remove();dragGhost=null}sel=null;tg=[];render()});
+$("branches").onclick=e=>{
+ const b=e.target.closest("button[data-branch]");
+ if(!b || !waitingForBranch || busy || done)return;
+ const n=G[key(g)],s=n&&n.opp[+b.dataset.branch];
+ if(!s)return;
+ play(s);after();
+};
+$("modeTabs").onclick=e=>{const b=e.target.closest("button[data-mode]");if(!b)return;if(b.dataset.mode==="bot"){$("botControls").hidden=false;$("botStart").hidden=false;botMode=false;busy=true;document.body.classList.add("bot-mode");document.querySelectorAll("#modeTabs button").forEach(x=>x.classList.toggle("on",x===b));say("Choose your color and bot strength, then start a game.")}else showTrainerMode()};$("botStart").addEventListener("click",e=>{e.preventDefault();try{startBotGame()}catch(error){console.error("Bot game could not start:",error);busy=false;say("The bot game could not start: "+error.message,"bad")}});$("undoBot").onclick=undoBotTurn;$("resignBot").onclick=resignBotGame;$("newBot").onclick=startBotGame;$("cancelPromotion").onclick=closePromotion;document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("promotionPicker").hidden)closePromotion()});$("promotionOptions").onclick=e=>{const b=e.target.closest("button[data-promotion]");if(!b)return;const move=pendingPromotions.find(m=>m.promotion===b.dataset.promotion);$("promotionPicker").hidden=true;pendingPromotions=[];if(move)submitUserMove(move.san)};$("nb").onclick=()=>botMode?startBotGame():start();$("tabs").onclick=e=>{const b=e.target.closest("button");if(b)setSide(b.dataset.r)};$("openingTiles").onclick=e=>{const b=e.target.closest("button[data-opening]");if(b)selectOpening(Number(b.dataset.opening))};
+$("variantTiles").onclick=e=>{const tile=e.target.closest("button[data-line]");if(!tile)return;selectedLine=Number(tile.dataset.line);start()};$("learn").onchange=render;$("coords").onchange=render;$("theme").onchange=()=>{document.body.dataset.theme=$("theme").value;try{localStorage.setItem("ct_theme",$("theme").value)}catch(e){}};$("soundStyle").onchange=()=>{try{localStorage.setItem("ct_sound",$("soundStyle").value)}catch(e){}};try{$("theme").value=localStorage.getItem("ct_theme")||"green";document.body.dataset.theme=$("theme").value;$("soundStyle").value=localStorage.getItem("ct_sound")||"wood"}catch(e){}
+$("hb").onclick=()=>{
+ const m=!done&&!busy&&mineTurn()&&expMove();
+ if(m){hint=[m.from,m.to];say("Hint: Move the piece from "+m.from+" nach "+m.to+".");render()}
+ else say("No repertoire move is available right now.","bad");
+};
+$("sb").onclick=()=>{
+ const m=!done&&!busy&&mineTurn()&&expMove();
+ if(m){wrongAttempt();hint=[m.from,m.to];say("Solution: "+de(m.san)+". See the Theory section for the explanation.","bad");render()}
+ else say("No solution is available right now.","bad");
+};
+
+if(typeof Chess==="undefined"){
+ say("The chess library could not be loaded. Check your internet connection and reload the page.","bad");
+ $("board").innerHTML='<div style="grid-column:1/-1;display:grid;place-items:center;padding:24px;text-align:center;color:var(--text)">Chess library not loaded</div>';
+}else{
+ try{setSide("w")}
+ catch(e){console.error("Trainer startup failed:",e);say("The trainer could not start: "+e.message,"bad");$("board").innerHTML='<div style="grid-column:1/-1;display:grid;place-items:center;padding:24px;text-align:center;color:var(--text)">A startup error occurred. Please reload the page.</div>'}
+}
+</script><script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.protocol === "http:")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(error => {
+      console.warn("Offline support could not be enabled:", error);
+    });
+  });
+}
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
