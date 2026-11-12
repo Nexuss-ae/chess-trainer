@@ -1,0 +1,8 @@
+{
+  "name": "chess-trainer-visual-polish",
+  "version": "5.8.0",
+  "private": true,
+  "description": "Chess trainer with clean, responsive strategic theory visualizations",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
+}
