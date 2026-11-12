@@ -1,8 +1,0 @@
-{
-  "name": "chess-trainer-strategic-theory",
-  "version": "5.7.0",
-  "private": true,
-  "description": "Chess trainer with position-aware opening theory and strategy maps",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=20" }
-}
