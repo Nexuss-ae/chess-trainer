@@ -1,0 +1,12 @@
+{
+  "name": "chess-trainer-theory-visual",
+  "version": "5.6.0",
+  "private": true,
+  "description": "Chess trainer with visual strategy maps and no coach voice or avatar assets",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
