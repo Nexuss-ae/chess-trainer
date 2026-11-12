@@ -1,0 +1,8 @@
+{
+  "name": "chess-trainer-board-visual-fix",
+  "version": "5.9.0",
+  "private": true,
+  "description": "Chess trainer with clean board highlights and working theory-stage controls",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
+}
