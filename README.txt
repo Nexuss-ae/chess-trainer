@@ -1,6 +1,6 @@
-Chess Trainer 6.5.0 — Direct Offline PvP
+Chess Trainer 6.6.0 — Calm Visual Update
 
-New: Direct offline play between two devices on the same Wi-Fi, without an Internet connection, a host PC, a lobby server or account. Existing Railway online, LAN-hosted and one-device local modes remain available.
+Direct offline play between two devices on the same Wi-Fi, without an Internet connection, a host PC, a lobby server or account. Existing Railway online, LAN-hosted and one-device local modes remain available.
 
 Before going offline
 1. On both devices, open the Chess Trainer while Internet is available at least once and leave it loaded. This lets the service worker save the page and its QR helper for offline use. In browser settings, install/add the site to the home screen if you want an app-like shortcut.
@@ -23,3 +23,11 @@ Network and browser notes
 Railway deployment
 Replace the existing files with the changed files from this folder: index.html, service-worker.js, package.json, and vendor/qrcode.min.js, vendor/jsQR.js, vendor/pako.min.js and their accompanying LICENSE files. Keep server.js, Dockerfile and start-lan.bat unchanged. No Railway environment variable is required. Commit and redeploy as usual. The added QR library is bundled locally and is not fetched from the Internet at runtime.
 
+
+6.6.0 visual updates
+- Board squares now keep the selected board theme and material. In opening training, the full suggested move squares are solid green; the most recent played move squares are solid yellow.
+- Local 2-player games no longer show a resign control.
+- Refined spacing, typography, card hierarchy, board framing, button states, focus rings, scrollbar colors and responsive behavior for a calmer, more consistent interface.
+- Direct offline QR play, LAN mode and Railway online lobbies remain included.
+
+To deploy this update on Railway, replace index.html, service-worker.js and package.json, and keep the vendor folder from this package. The server.js and Dockerfile from the previous release are still compatible. Reload the deployed page once while online on each device so the new service worker can cache the update before offline use.
