@@ -1,4 +1,4 @@
-Chess Trainer 6.6.0 — Calm Visual Update
+Chess Trainer 6.6.1 — Soft Highlights and Local Controls
 
 Direct offline play between two devices on the same Wi-Fi, without an Internet connection, a host PC, a lobby server or account. Existing Railway online, LAN-hosted and one-device local modes remain available.
 
@@ -31,3 +31,8 @@ Replace the existing files with the changed files from this folder: index.html, 
 - Direct offline QR play, LAN mode and Railway online lobbies remain included.
 
 To deploy this update on Railway, replace index.html, service-worker.js and package.json, and keep the vendor folder from this package. The server.js and Dockerfile from the previous release are still compatible. Reload the deployed page once while online on each device so the new service worker can cache the update before offline use.
+
+6.6.1 updates
+- In bot games and every PvP mode, trainer move hints are suppressed, including any stale hint left over from another mode. Legal destinations still appear after you select a piece.
+- The last move is marked in a softer, translucent-looking yellow. Trainer suggestions (in trainer modes only) use a soft green blend, and ordinary squares keep the active board palette.
+- Local 2-player now has Undo turn (reverses the most recent complete turn, or the first move if only one exists) and Abort game (asks before discarding the position). There is no resign button in this mode.
