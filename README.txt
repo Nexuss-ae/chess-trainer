@@ -36,3 +36,5 @@ To deploy this update on Railway, replace index.html, service-worker.js and pack
 - In bot games and every PvP mode, trainer move hints are suppressed, including any stale hint left over from another mode. Legal destinations still appear after you select a piece.
 - The last move is marked in a softer, translucent-looking yellow. Trainer suggestions (in trainer modes only) use a soft green blend, and ordinary squares keep the active board palette.
 - Local 2-player now has Undo turn (reverses the most recent complete turn, or the first move if only one exists) and Abort game (asks before discarding the position). There is no resign button in this mode.
+
+6.6.2: Legal destination dots remain visible on softly highlighted green and yellow squares.

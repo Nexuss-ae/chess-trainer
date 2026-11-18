@@ -1,4 +1,4 @@
-const CACHE_NAME = "chess-trainer-6.6.1-soft-highlights";
+const CACHE_NAME = "chess-trainer-6.6.2-legal-dots-on-highlights";
 const APP_ROOT = self.registration.scope;
 self.addEventListener("install", event => event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll([APP_ROOT,new URL("vendor/qrcode.min.js",APP_ROOT).href,new URL("vendor/jsQR.js",APP_ROOT).href,new URL("vendor/pako.min.js",APP_ROOT).href])).then(() => self.skipWaiting())));
 self.addEventListener("activate", event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("chess-trainer-") && key !== CACHE_NAME).map(key => caches.delete(key)))).then(() => self.clients.claim())));

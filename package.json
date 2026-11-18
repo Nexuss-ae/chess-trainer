@@ -1,6 +1,6 @@
 {
   "name": "chess-trainer-repertoire-update",
-  "version": "6.6.1",
+  "version": "6.6.2",
   "private": true,
   "description": "Chess trainer with calm visual refresh with local, online, LAN and direct offline PvP modes",
   "scripts": { "start": "node server.js" },
