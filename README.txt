@@ -1,4 +1,4 @@
-Chess Trainer 6.7.5 — Local Lobby and Favicon Fix
+Chess Trainer 6.7.6 — Opening, Scenarios, Board and Promotion Update
 
 Chess Trainer 6.7.1 — Local Lobby and Board Orientation
 
@@ -24,3 +24,5 @@ Railway deployment: upload the full package and rebuild the Docker image. The Do
 6.7.4 fixes the browser-tab icon by including ICO and PNG fallbacks and refreshing the service worker cache.
 
 6.7.5 fixes the Railway image build: it now copies all favicon formats and the vendor folder into the container. The browser uses /favicon.ico as its primary icon.
+
+6.7.6 adds a reliable continue-from-opening action against the bot, keeps the player’s color at the bottom in every non-local mode, opens the position selector for middlegame and endgame scenarios, and makes random scenario changes available during play after confirmation. Promotion choices now use a wider compact dialog with fully visible pieces.
