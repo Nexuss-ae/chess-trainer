@@ -1,4 +1,4 @@
-Chess Trainer 6.7.8 — PvP Lobby Flow
+Chess Trainer 6.7.9 — Title Update
 
 Chess Trainer 6.7.1 — Local Lobby and Board Orientation
 
@@ -30,3 +30,5 @@ Railway deployment: upload the full package and rebuild the Docker image. The Do
 6.7.7 changes Direct offline PvP into a lobby-first handshake. The host creates the lobby, chooses White/Black/random and a clock in the lobby, then the guest scans the invite. The guest’s return QR appears automatically for the host to scan. The game starts with the host-selected color and clock.
 
 6.7.8: the Direct PvP host sees lobby settings, an invite QR, a player-QR scanner and a Start game button. Start game remains disabled until the guest has joined and the data channel is open. The guest view is reduced to the QR area and Scan QR code. Local and Direct pre-game lobbies clear the board display. Navigation now groups bot play under Singleplayer and Local/Direct under Multiplayer, and the selected menu item is synchronized with the visible mode.
+
+6.7.9 changes the page heading and browser tab title to “chess.com fake xD”.
