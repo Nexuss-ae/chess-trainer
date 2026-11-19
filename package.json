@@ -1,8 +1,8 @@
 {
   "name": "chess-trainer-opening-success-variants",
-  "version": "6.8.1",
+  "version": "6.9.0",
   "private": true,
-  "description": "Chess trainer with local and direct offline PvP only",
+  "description": "Chess trainer with curated, reviewed gambit lines and complete mate-trap examples",
   "scripts": {
     "start": "node server.js"
   },

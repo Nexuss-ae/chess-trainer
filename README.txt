@@ -1,3 +1,20 @@
+Chess Trainer 6.9.0 — Curated Gambit Lines
+
+- Added the Tennison Gambit and its ICBM queen trap, Fried Liver and Lolli attacks, the Nakhmanson and Belgrade knight-based gambits, plus the Traxler, Blackburne Shilling and Rousseau gambits.
+- Added complete, legal example games ending in checkmate for the Fried Liver, Traxler, Blackburne Shilling and Rousseau tactical traps.
+- The ICBM line correctly ends with a queen win: it is not a forced checkmate.
+- Replayed all 48 explicit gambit lines move by move to check legality. Gambit lines are now only curated branches; the app no longer invents opponent replies or extends gambits with heuristic moves. Random line selection skips branches explicitly marked as traps, blunders or queen traps; those remain available by direct selection.
+- Legal-move replay verifies that the recorded moves are possible; it is not a chess-engine evaluation proving every branch is objectively best. Tactical traps are labeled, and should not be mistaken for normal best-play outcomes.
+- Corrected the Elephant Gambit to the standard 1.e4 e5 2.Nf3 d5 3.exd5 e4 main line.
+- Selecting a gambit from the expanded library now starts that gambit directly.
+- The success screen distinguishes a completed training line from a complete checkmate example.
+
+Accuracy note: gambits and traps do not force a win against best defense. Mating branches are labeled as tactical traps and are kept out of random selection.
+
+Release package files: index.html, service-worker.js, package.json, server.js, Dockerfile, favicon files and vendor libraries. Deploy the complete folder if using the Railway configuration.
+
+Previous release notes follow.
+
 Chess Trainer 6.8.1 - Longer Opening Variations
 
 - Opening lines now finish in a locked success screen with confetti; there is no transition into a bot game.
