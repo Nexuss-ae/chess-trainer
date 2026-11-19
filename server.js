@@ -7,7 +7,7 @@ const PORT = Number(process.env.PORT || 3000);
 const MIME = {
   ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg", ".mp3": "audio/mpeg", ".svg": "image/svg+xml",
+  ".jpeg": "image/jpeg", ".mp3": "audio/mpeg", ".svg": "image/svg+xml", ".ico": "image/x-icon",
   ".json": "application/json; charset=utf-8"
 };
 

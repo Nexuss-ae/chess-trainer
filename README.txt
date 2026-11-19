@@ -1,4 +1,4 @@
-Chess Trainer 6.7.3 — Local Lobby Options
+Chess Trainer 6.7.4 — Local Lobby and Favicon Fix
 
 Chess Trainer 6.7.1 — Local Lobby and Board Orientation
 
@@ -16,7 +16,9 @@ Direct offline
 
 Railway deployment: replace index.html, service-worker.js, server.js and package.json, and include vendor/. No Railway variables are required for direct offline pairing.
 
-6.7.2 adds a simple chess pawn favicon for the browser tab. Keep favicon.svg beside index.html when deploying.
+6.7.4 includes SVG, PNG and ICO favicon formats with cache-busted URLs. Keep favicon.svg, favicon.png and favicon.ico beside index.html when deploying.
 
 
 6.7.3 removes the in-game “Next game” clock selector. Use New game to return to the pre-game lobby, where the next clock can be chosen. The same lobby has a checkbox to turn automatic board rotation on or off; the preference is remembered.
+
+6.7.4 fixes the browser-tab icon by including ICO and PNG fallbacks and refreshing the service worker cache.
