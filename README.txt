@@ -1,4 +1,4 @@
-Chess Trainer 6.7.4 — Local Lobby and Favicon Fix
+Chess Trainer 6.7.5 — Local Lobby and Favicon Fix
 
 Chess Trainer 6.7.1 — Local Lobby and Board Orientation
 
@@ -14,7 +14,7 @@ Direct offline
 - Pair with the invite and answer QR codes. QR codes are rendered directly as SVG and use the browser’s built-in compression where available; the bundled QR library and scanner are cached for offline use.
 - Both devices must open the current deployed page once while online before using it offline. Keep both tabs open during play. Some Wi-Fi networks block peer-to-peer traffic.
 
-Railway deployment: replace index.html, service-worker.js, server.js and package.json, and include vendor/. No Railway variables are required for direct offline pairing.
+Railway deployment: upload the full package and rebuild the Docker image. The Dockerfile copies the ICO, PNG, SVG and vendor files into the served app. No Railway variables are required for direct offline pairing.
 
 6.7.4 includes SVG, PNG and ICO favicon formats with cache-busted URLs. Keep favicon.svg, favicon.png and favicon.ico beside index.html when deploying.
 
@@ -22,3 +22,5 @@ Railway deployment: replace index.html, service-worker.js, server.js and package
 6.7.3 removes the in-game “Next game” clock selector. Use New game to return to the pre-game lobby, where the next clock can be chosen. The same lobby has a checkbox to turn automatic board rotation on or off; the preference is remembered.
 
 6.7.4 fixes the browser-tab icon by including ICO and PNG fallbacks and refreshing the service worker cache.
+
+6.7.5 fixes the Railway image build: it now copies all favicon formats and the vendor folder into the container. The browser uses /favicon.ico as its primary icon.
