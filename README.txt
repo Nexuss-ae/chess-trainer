@@ -1,4 +1,4 @@
-Chess Trainer 6.7.6 — Opening, Scenarios, Board and Promotion Update
+Chess Trainer 6.7.7 — Direct Lobby QR and Game Options
 
 Chess Trainer 6.7.1 — Local Lobby and Board Orientation
 
@@ -26,3 +26,5 @@ Railway deployment: upload the full package and rebuild the Docker image. The Do
 6.7.5 fixes the Railway image build: it now copies all favicon formats and the vendor folder into the container. The browser uses /favicon.ico as its primary icon.
 
 6.7.6 adds a reliable continue-from-opening action against the bot, keeps the player’s color at the bottom in every non-local mode, opens the position selector for middlegame and endgame scenarios, and makes random scenario changes available during play after confirmation. Promotion choices now use a wider compact dialog with fully visible pieces.
+
+6.7.7 changes Direct offline PvP into a lobby-first handshake. The host creates the lobby, chooses White/Black/random and a clock in the lobby, then the guest scans the invite. The guest’s return QR appears automatically for the host to scan. The game starts with the host-selected color and clock.
