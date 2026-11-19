@@ -1,8 +1,8 @@
-Chess Trainer 6.8.0 - Opening Success and Expanded Repertoire
+Chess Trainer 6.8.1 - Longer Opening Variations
 
 - Opening lines now finish in a locked success screen with confetti; there is no transition into a bot game.
 - Expanded both color repertoires with additional openings and gambits.
-- Every listed opening now has at least five legal reply/practice lines. Lines labeled Practice alternative are generated legal practice branches, not claimed as forced book theory.
+- Every listed opening has at least five legal reply/practice lines, extended to about ten moves for each color (20–21 plies when the position allows). Lines labeled Practice alternative or extended practice are legal generated continuations, not claimed as forced book theory.
 Chess Trainer 6.7.9 — Title Update
 
 Chess Trainer 6.7.1 — Local Lobby and Board Orientation

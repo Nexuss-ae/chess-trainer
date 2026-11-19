@@ -1,6 +1,6 @@
 {
   "name": "chess-trainer-opening-success-variants",
-  "version": "6.8.0",
+  "version": "6.8.1",
   "private": true,
   "description": "Chess trainer with local and direct offline PvP only",
   "scripts": {
