@@ -1,8 +1,12 @@
 {
   "name": "chess-trainer-repertoire-update",
-  "version": "6.7.1",
+  "version": "6.7.3",
   "private": true,
   "description": "Chess trainer with local and direct offline PvP only",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=20" }
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }
