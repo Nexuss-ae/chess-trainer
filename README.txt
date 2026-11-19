@@ -1,16 +1,15 @@
-Chess Trainer 6.7.0 — Local and Direct Offline PvP
+Chess Trainer 6.7.1 — Local Lobby and Board Orientation
 
-This release keeps the two PvP modes in the trainer:
-- Local 2-player: both people use one device.
-- Direct offline: pair two devices using QR codes over the same Wi-Fi. No lobby server or Internet connection is used for the match.
+PvP modes: Local 2-player on one device and Direct offline over same-Wi-Fi device-to-device pairing. Online lobby and LAN lobby have been removed.
 
-Direct offline setup
-1. Both devices must open the latest deployed page once while online so the service worker can cache the page and QR tools.
-2. At school, both devices join the same Wi-Fi and open the saved site.
-3. Choose PvP → Direct offline. One person creates the invite as White, the other joins as Black and scans the invite. Scan the reply QR on White’s screen to finish pairing.
-4. The game starts after the direct connection is ready. Choose no clock or 5, 10, 20 or 30 minutes.
+Local 2-player
+- The initial pre-game lobby lets you choose a clock before starting.
+- After a game, New game returns to that pre-game lobby instead of immediately starting another match. The selected next-game time is carried back into the lobby.
+- During the match, the player to move is always shown at the bottom. This applies when resuming or undoing as well.
 
-The QR is drawn locally as SVG from the bundled QR generator. The QR, scanner and compression scripts are included in vendor/ and cached for offline use. No QR or game server is contacted during pairing or play. Browser camera permission is needed to scan; manual copy/paste remains available. Both tabs must stay open. Some school Wi-Fi networks block device-to-device connections.
+Direct offline
+- Each player keeps their own color at the bottom throughout the match.
+- Pair with the invite and answer QR codes. QR codes are rendered directly as SVG and use the browser’s built-in compression where available; the bundled QR library and scanner are cached for offline use.
+- Both devices must open the current deployed page once while online before using it offline. Keep both tabs open during play. Some Wi-Fi networks block peer-to-peer traffic.
 
-Railway deployment
-Replace index.html, service-worker.js, server.js and package.json, and include the vendor/ folder. LAN lobby startup files are no longer part of this release. Railway still serves the static site; direct offline matches do not use a Railway game lobby.
+Railway deployment: replace index.html, service-worker.js, server.js and package.json, and include vendor/. No Railway variables are required for direct offline pairing.
