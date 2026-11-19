@@ -651,7 +651,7 @@ function render(){
  renderBranches();renderJourney();renderTheory();renderCaptured();renderBotActions();renderGameNotice();updateOpeningContinuationAction();setActiveMode(document.body.classList.contains("settings-mode")?"settings":openingContinuation?"bot":activeMode);if(scenarioMode)renderScenarioTheory();if(capturePulse&&!capturePulse.animated){capturePulse.animated=true;launchCapture(capturePulse)}
  $("st").textContent="Completed: "+st.d+" · perfect: "+st.p;persistGameSession();
 }
-function updateOpeningContinuationAction(){const button=$("continueOpening");const available=activeMode==="trainer"&&!botMode&&!scenarioMode&&done&&!g.game_over()&&!!currentLine;button.hidden=!available;if(available)button.textContent="Continue playing vs a bot"}
+function updateOpeningContinuationAction(){const button=$("continueOpening");button.hidden=true}
 function renderGameNotice(){
  const notice=$("gameNotice");if(!notice||!g)return;if((activeMode==="local"&&!localMode)||(activeMode==="direct"&&!directGameStarted)){notice.hidden=true;return}
  if(!g.in_check()){notice.hidden=true;return}
@@ -820,7 +820,7 @@ function after(){
 }
 function fin(){if(courseMode)return;if(done)return;done=true;st.d++;if(!err)st.p++;st.xp=(Number(st.xp)||0)+20;journeyMessage="✨ Line complete! +20 XP completion bonus.";saveStats();
  try{localStorage.setItem("ct",JSON.stringify(st))}catch(e){}
- say(err?"✓ Line completed with "+err+" incorrect attempt(s).":"✓ Perfect!","ok");render();if(g.in_checkmate()){const won=g.turn()!==R.col;showGameResult(won?"win":"loss",won?"Checkmate — you win!":"Checkmate",won?"Your opponent has no legal move.":"Your king has been checkmated.")}else if(g.in_draw())showGameResult("draw","Draw","The game is drawn by the chess rules.")}
+ say(err?"✓ Line completed with "+err+" incorrect attempt(s).":"✓ Perfect!","ok");render();if(g.in_checkmate()){const won=g.turn()!==R.col;showGameResult(won?"win":"loss",won?"Checkmate — you win!":"Checkmate",won?"Your opponent has no legal move.":"Your king has been checkmated.")}else if(g.in_draw())showGameResult("draw","Draw","The game is drawn by the chess rules.");else setTimeout(()=>{if(activeMode==="trainer"&&done&&!g.game_over()&&currentLine)continueOpeningVsBot()},900)}
 
 function start(){
  openingContinuation=false;document.body.classList.remove("opening-continuation");$("continueOpening").hidden=true;g=new Chess();
