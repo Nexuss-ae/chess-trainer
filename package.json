@@ -1,8 +1,8 @@
 {
   "name": "chess-trainer-opening-success-variants",
-  "version": "6.9.0",
+  "version": "6.9.1",
   "private": true,
-  "description": "Chess trainer with curated, reviewed gambit lines and complete mate-trap examples",
+  "description": "Chess trainer with separate, curated checkmating opening traps",
   "scripts": {
     "start": "node server.js"
   },

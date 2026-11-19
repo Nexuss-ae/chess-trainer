@@ -1,15 +1,12 @@
-Chess Trainer 6.9.0 — Curated Gambit Lines
+Chess Trainer 6.9.1 — Separate Mate Trap Library
 
-- Added the Tennison Gambit and its ICBM queen trap, Fried Liver and Lolli attacks, the Nakhmanson and Belgrade knight-based gambits, plus the Traxler, Blackburne Shilling and Rousseau gambits.
-- Added complete, legal example games ending in checkmate for the Fried Liver, Traxler, Blackburne Shilling and Rousseau tactical traps.
-- The ICBM line correctly ends with a queen win: it is not a forced checkmate.
-- Replayed all 48 explicit gambit lines move by move to check legality. Gambit lines are now only curated branches; the app no longer invents opponent replies or extends gambits with heuristic moves. Random line selection skips branches explicitly marked as traps, blunders or queen traps; those remain available by direct selection.
-- Legal-move replay verifies that the recorded moves are possible; it is not a chess-engine evaluation proving every branch is objectively best. Tactical traps are labeled, and should not be mistaken for normal best-play outcomes.
-- Corrected the Elephant Gambit to the standard 1.e4 e5 2.Nf3 d5 3.exd5 e4 main line.
-- Selecting a gambit from the expanded library now starts that gambit directly.
-- The success screen distinguishes a completed training line from a complete checkmate example.
+- Added a dedicated Mate traps category to the expanded opening library, separately browsable for White and Black.
+- Moved checkmating trap branches out of the Gambits category; ordinary gambit lines stay separate.
+- Added Légal’s Mate and Scholar’s Mate for White, plus the Siberian Trap and Fishing Pole Trap for Black. Existing Fried Liver, Traxler, Blackburne Shilling and Rousseau mate lines now appear in the trap category.
+- Every trap card names the key tactical idea and explains that the mate depends on the recorded opponent mistake. The regular random opening selection does not choose trap lines.
+- Trap move sequences are replayed by the chess rules engine and each is required to end in checkmate before it is included.
 
-Accuracy note: gambits and traps do not force a win against best defense. Mating branches are labeled as tactical traps and are kept out of random selection.
+Mate traps are tactical patterns, not forced outcomes of their openings. The opponent can avoid them by choosing a sound defense.
 
 Release package files: index.html, service-worker.js, package.json, server.js, Dockerfile, favicon files and vendor libraries. Deploy the complete folder if using the Railway configuration.
 
