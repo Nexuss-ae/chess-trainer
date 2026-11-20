@@ -1,6 +1,6 @@
 {
   "name": "chess-trainer-opening-success-variants",
-  "version": "6.9.2",
+  "version": "6.9.3",
   "private": true,
   "description": "Chess trainer with freeboard mode and improved offline caching",
   "scripts": {

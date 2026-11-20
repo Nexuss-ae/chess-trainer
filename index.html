@@ -2,10 +2,10 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=6.9.2">
-<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png?v=6.9.2">
-<link rel="apple-touch-icon" href="/favicon.png?v=6.9.2">
-<link rel="apple-touch-icon" href="./favicon.png?v=6.9.2">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=6.9.3">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png?v=6.9.3">
+<link rel="apple-touch-icon" href="/favicon.png?v=6.9.3">
+<link rel="apple-touch-icon" href="./favicon.png?v=6.9.3">
 <title>chess.com fake xD</title>
 <style>
 *{box-sizing:border-box}
@@ -264,12 +264,12 @@ body:not(.bot-mode):not(.scenario-mode):not(.settings-mode):not(.direct-mode):no
  <div class="sidebar-head"><div class="brandmark">♞</div><div><strong>Chess Trainer</strong><small>Choose your next step</small></div><button id="closeSidebar" type="button" aria-label="Close navigation">×</button></div>
  <nav id="modeTabs" aria-label="Main navigation">
   <div class="sidebar-group"><span class="sidebar-label">TRAINERS</span>
-   <button type="button" data-mode="free"><span class="nav-icon">♜</span><span>Free board</span></button><button type="button" data-mode="trainer" class="on"><span class="nav-icon">♟</span><span>Opening trainer</span></button>
+   <button type="button" data-mode="trainer" class="on"><span class="nav-icon">♟</span><span>Opening trainer</span></button>
    <button type="button" data-mode="middle"><span class="nav-icon">♞</span><span>Middlegame trainer</span></button>
    <button type="button" data-mode="end"><span class="nav-icon">♚</span><span>Endgame trainer</span></button>
   </div>
   <div class="sidebar-group"><span class="sidebar-label">OPENING REFERENCE</span><button type="button" id="openTheoryLibrary" aria-haspopup="dialog"><span class="nav-icon">▤</span><span>Opening theory</span></button></div>
-  <div class="sidebar-group"><span class="sidebar-label">SINGLEPLAYER</span><button type="button" data-mode="bot"><span class="nav-icon">⚔</span><span>vs a bot</span></button></div>
+  <div class="sidebar-group"><span class="sidebar-label">SINGLEPLAYER</span><button type="button" data-mode="free"><span class="nav-icon">♜</span><span>Free board</span></button><button type="button" data-mode="bot"><span class="nav-icon">⚔</span><span>vs a bot</span></button></div>
   <div class="sidebar-group"><span class="sidebar-label">MULTIPLAYER</span><button type="button" data-mode="local"><span class="nav-icon">♙</span><span>Local 2-player</span></button><button type="button" data-mode="direct"><span class="nav-icon">▦</span><span>Direct offline</span></button></div>
   <div class="sidebar-group"><span class="sidebar-label">PERSONALIZE</span><button type="button" data-mode="settings"><span class="nav-icon">⚙</span><span>Settings</span></button></div>
  </nav>
@@ -1096,13 +1096,13 @@ function requestBotConfirmation(action){if(!botMode||done)return;if(action==="un
  else{wrongAttempt();sel=null;tg=[];hint=[];say("That is not the repertoire move. Try again or use the hint.","bad");const board=$("board");board.classList.remove("sh");void board.offsetWidth;board.classList.add("sh");render()}
 }
 function projectedPremoveGame(){let game=new Chess(g.fen().replace(" "+g.turn()+" "," "+R.col+" "));for(const q of premoveQueue){const m=game.moves({square:q.from,verbose:true}).find(x=>x.to===q.to&&(!q.promotion||x.promotion===q.promotion));if(!m)return null;game.move(m.san);game=new Chess(game.fen().replace(" "+game.turn()+" "," "+R.col+" "))}return game}function premoveMoves(square){if(!botMode||!R)return[];const game=projectedPremoveGame(),p=game&&game.get(square);if(!p||p.color!==R.col)return[];return game.moves({square,verbose:true})}function queuePremove(from,to){const game=projectedPremoveGame();if(!game)return false;const m=game.moves({square:from,verbose:true}).find(x=>x.to===to);if(!m)return false;premoveQueue.push({from,to,promotion:m.promotion||null});sel=null;tg=[];$('premoveStatus').textContent=premoveQueue.length+" move"+(premoveQueue.length===1?"":"s")+" queued · red squares show your planned sequence";say("Premove "+premoveQueue.length+" queued: "+from+" → "+to+".");render();return true}function premoveClick(sq){if(sel&&tg.includes(sq)&&queuePremove(sel,sq))return;const game=projectedPremoveGame(),p=game&&game.get(sq);if(p&&p.color===R.col){sel=sq;tg=premoveMoves(sq).map(m=>m.to);say("Choose the destination for your next premove.");render()}else{sel=null;tg=[];render()}}function handleSquare(square){if(botMode&&busy&&botTimer&&$("premoveToggle").checked){premoveClick(square);return}
- if(done||busy||!mineTurn())return;
+ if(done||busy||(!freeMode&&!mineTurn()))return;
  const piece=g.get(square);
  if(sel){
   const move=g.moves({square:sel,verbose:true}).find(m=>m.to===square);
   if(move){pickMoveAt(sel,square);return}
  }
- if(piece&&piece.color===R.col){sel=square;tg=g.moves({square,verbose:true}).map(m=>m.to);render();return}
+ if(piece&&(freeMode||piece.color===R.col)){sel=square;tg=g.moves({square,verbose:true}).map(m=>m.to);render();return}
  if(sel){sel=null;tg=[];render()}
 }
 const BOT_LEVELS={"300":{depth:1,noise:430,nodes:900},"600":{depth:1,noise:250,nodes:1500},"900":{depth:2,noise:140,nodes:5000},"1200":{depth:2,noise:55,nodes:9000},"1500":{depth:3,noise:10,nodes:22000},"1800":{depth:3,noise:3,nodes:42000},"2100":{depth:4,noise:0,nodes:65000}};
