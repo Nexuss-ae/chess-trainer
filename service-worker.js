@@ -1,8 +1,6 @@
-const CACHE_NAME = "chess-trainer-6.9.1-mate-trap-library";
-const APP_ROOT = self.registration.scope;
-self.addEventListener("install", event => event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll([APP_ROOT,new URL("favicon.svg?v=6.9.1",APP_ROOT).href,new URL("favicon.png?v=6.9.1",APP_ROOT).href,new URL("favicon.ico?v=6.9.1",APP_ROOT).href,new URL("vendor/qrcode.min.js",APP_ROOT).href,new URL("vendor/jsQR.js",APP_ROOT).href])).then(() => self.skipWaiting())));
-self.addEventListener("activate", event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("chess-trainer-") && key !== CACHE_NAME).map(key => caches.delete(key)))).then(() => self.clients.claim())));
-self.addEventListener("fetch", event => {
- const request=event.request;if(request.method!=="GET"||new URL(request.url).origin!==self.location.origin)return;
- event.respondWith(fetch(request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put(request,copy))}return response}).catch(async()=>{const cached=await caches.match(request);if(cached)return cached;if(request.mode==="navigate")return caches.match(APP_ROOT);return Response.error()}));
-});
+const CACHE_NAME="chess-trainer-6.9.2-freeboard-offline";
+const APP_ROOT=self.registration.scope;
+const CORE=[APP_ROOT,new URL("index.html",APP_ROOT).href,new URL("favicon.svg?v=6.9.2",APP_ROOT).href,new URL("favicon.png?v=6.9.2",APP_ROOT).href,new URL("favicon.ico?v=6.9.2",APP_ROOT).href,new URL("vendor/qrcode.min.js",APP_ROOT).href,new URL("vendor/jsQR.js",APP_ROOT).href];
+self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
+self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith("chess-trainer-")&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener("fetch",e=>{const r=e.request,u=new URL(r.url);if(r.method!=="GET"||u.origin!==self.location.origin)return;if(r.mode==="navigate"){e.respondWith(fetch(r).then(res=>{if(res.ok)caches.open(CACHE_NAME).then(c=>c.put(r,res.clone()));return res}).catch(async()=>await caches.match(r)||await caches.match(APP_ROOT)));return}e.respondWith(caches.match(r).then(hit=>hit||fetch(r).then(res=>{if(res.ok)caches.open(CACHE_NAME).then(c=>c.put(r,res.clone()));return res}).catch(()=>Response.error())))})

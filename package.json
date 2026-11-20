@@ -1,8 +1,8 @@
 {
   "name": "chess-trainer-opening-success-variants",
-  "version": "6.9.1",
+  "version": "6.9.2",
   "private": true,
-  "description": "Chess trainer with separate, curated checkmating opening traps",
+  "description": "Chess trainer with freeboard mode and improved offline caching",
   "scripts": {
     "start": "node server.js"
   },
