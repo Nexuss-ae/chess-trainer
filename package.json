@@ -1,8 +1,8 @@
 {
   "name": "chess-trainer-opening-success-variants",
-  "version": "6.9.4",
+  "version": "6.9.5",
   "private": true,
-  "description": "Chess trainer with freeboard mode and improved offline caching",
+  "description": "Chess trainer with freeboard mode, fast offline loading and compressed delivery",
   "scripts": {
     "start": "node server.js"
   },
